@@ -7,9 +7,6 @@ import { HiMail } from "react-icons/hi";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import FlowerLogo from "../../components/FlowerLogo.jsx";
 
-/* ─── Shared class strings ───────────────────────────────────────────────────
-   Định nghĩa 1 lần, dùng lại cho tất cả field → dễ chỉnh đồng bộ sau này
-   ─────────────────────────────────────────────────────────────────────────── */
 const labelCls =
   "text-sm font-medium text-[#e11d48]";
 
@@ -57,7 +54,7 @@ function SignUp() {
 
       {/* ── Left cover ── */}
       <div
-        className="hidden lg:block flex-shrink-0 w-[53%] h-full bg-cover bg-center bg-no-repeat"
+        className="hidden lg:block flex-shrink-0 w-[40%] h-full bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${CoverImage})` }}
       />
 
