@@ -1,5 +1,5 @@
 ﻿import { createContext, useCallback, useState } from "react";
-import { sendOTP, signUpService, verifyOTP } from "./authService";
+import { sendOTP, signUpService, verifyOTP } from "../service/authService";
 
 export const AuthContext = createContext(null);
 

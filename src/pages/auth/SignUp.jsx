@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+import { BiLoaderAlt } from "react-icons/bi";
 import FlowerLogo from "../../components/FlowerLogo.jsx";
 
 const labelCls =
@@ -187,8 +188,9 @@ function SignUp() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-12 rounded-[6px] bg-[#e11d48] hover:bg-[#be123c] disabled:opacity-60 transition-colors text-white text-[15px] font-medium tracking-wide"
+                className="w-full h-12 flex items-center justify-center gap-2 rounded-[6px] bg-[#e11d48] hover:bg-[#be123c] disabled:opacity-60 transition-colors text-white text-[15px] font-medium tracking-wide"
               >
+                {isSubmitting && <BiLoaderAlt className="animate-spin text-xl" />}
                 {isSubmitting ? "Signing up..." : "SIGN UP"}
               </button>
 

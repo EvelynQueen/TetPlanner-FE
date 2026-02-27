@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import FlowerLogo from "../../components/FlowerLogo.jsx";
+import { BiLoaderAlt } from "react-icons/bi";
 
 
 function VerifyEmail() {
@@ -188,8 +189,9 @@ function VerifyEmail() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-[240px] h-[50px] rounded-[10px] bg-[#e11d48] hover:bg-[#be123c] disabled:opacity-60 transition-colors text-white text-[16px] font-bold font-['Plus_Jakarta_Sans']"
+              className="w-[240px] h-[50px] flex items-center justify-center gap-2 rounded-[10px] bg-[#e11d48] hover:bg-[#be123c] disabled:opacity-60 transition-colors text-white text-[16px] font-bold font-['Plus_Jakarta_Sans']"
             >
+              {isSubmitting && <BiLoaderAlt className="animate-spin text-xl" />}
               {isSubmitting ? "Verifying..." : "Submit"}
             </button>
           </form>
