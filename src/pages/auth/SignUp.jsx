@@ -61,7 +61,7 @@ function SignUp() {
 
       {/* ── Right panel ── */}
       <div className="flex-1 flex items-center justify-center px-8 bg-white overflow-y-auto">
-        <div className="w-full max-w-[343px] py-10">
+        <div className="w-full max-w-85.75 py-10">
 
           {/* Logo + brand */}
           <div className="flex items-center justify-center gap-[6px] mb-2">
