@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import cover from "../assets/cover.jpg";
+import { toast } from "react-toastify";
 import { AuthContext } from "../contexts/AuthContext";
 
 function LoginForm() {
@@ -15,15 +16,23 @@ function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError(""); // Clear previous errors
 
     try {
       const res = await login({ email, password });
+
       if (res && res.success) {
-        navigate("/"); 
+        toast.success("Login successful! Welcome back.");
+        navigate("/");
+      } else {
+        // This handles { success: false }
+        const errorMessage = res?.message || "Login fail (Please try again)";
+        setError(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError(err.message || "Login fail (Please try again)");
+      toast.error(err.message || "Login fail (Please try again)");
     }
   };
 
@@ -82,7 +91,7 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
-                    if (error) setError(""); 
+                    if (error) setError("");
                   }}
                   className={`w-full p-3 border rounded-lg outline-none transition-all pr-12 ${
                     displayError
@@ -122,7 +131,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-[343px] h-[50px] mx-auto rounded-[10px] bg-[#E11D48] text-white font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+              className="w-85.75 h-12.5 mx-auto rounded-[10px] bg-[#E11D48] text-white font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
             >
               {loading ? "LOGGING IN..." : "LOGIN"}
             </button>

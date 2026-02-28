@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import cover from "../assets/cover.jpg";
+import { toast } from "react-toastify";
 import { AuthContext } from "../contexts/AuthContext";
 
 function ResetPassword() {
@@ -36,9 +37,13 @@ function ResetPassword() {
       const res = await resetPassword({ token, newPassword });
       if (res && res.success) {
         navigate("/reset-success"); // Quay về trang đăng nhập hoặc báo thành công
+        toast.success(
+          "Password reset successful! Please log in with your new password.",
+        ); // Hiển thị thông báo thành công
       }
     } catch (err) {
       setError(err.message || "Failed to reset password.");
+      toast.error(err.message || "Failed to reset password."); // Hiển thị thông báo lỗi
     }
   };
 
