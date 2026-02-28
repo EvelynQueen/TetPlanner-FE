@@ -24,22 +24,22 @@ export const getTaskById = (id) => mockGetTaskById(id);
 
 /**
  * POST /tasks
- * @param {{ title: string, category: string, priority: string, status: string }} payload
+ * @param {{ title, description, category_id, priority, status, start_date, start_time, due_date, due_time }} payload
  * @returns {Promise<Task>}
  */
 export const createTask = (payload) => mockCreateTask(payload);
 
 /**
  * PUT /tasks/:id
- * @param {number} id
- * @param {{ title: string, category: string, priority: string, status: string }} payload
+ * @param {string} id  UUID
+ * @param {{ title, description, category_id, priority, status, start_date, start_time, due_date, due_time }} payload
  * @returns {Promise<Task>}
  */
 export const updateTask = (id, payload) => mockUpdateTask(id, payload);
 
 /**
  * DELETE /tasks/:id
- * @param {number} id
+ * @param {string} id  UUID
  * @returns {Promise<void>}
  */
 export const deleteTask = (id) => mockDeleteTask(id);

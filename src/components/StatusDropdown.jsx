@@ -3,24 +3,30 @@ import { Check } from "lucide-react";
 
 // ─── Style Maps ────────────────────────────────────────────────────────────────
 const BADGE_STYLES = {
-  Todo: "bg-slate-100 text-slate-500 border border-slate-200",
-  "In Progress": "bg-blue-100 text-blue-700 border border-blue-200",
-  Done: "bg-green-100 text-green-700 border border-green-200",
+  todo:        "bg-slate-100 text-slate-500 border border-slate-200",
+  in_progress: "bg-blue-100 text-blue-700 border border-blue-200",
+  done:        "bg-green-100 text-green-700 border border-green-200",
 };
 
 const OPTION_ACTIVE = {
-  Todo: "bg-slate-100 text-slate-600",
-  "In Progress": "bg-blue-50 text-blue-700",
-  Done: "bg-green-50 text-green-700",
+  todo:        "bg-slate-100 text-slate-600",
+  in_progress: "bg-blue-50 text-blue-700",
+  done:        "bg-green-50 text-green-700",
 };
 
 const DOT_COLOR = {
-  Todo: "bg-slate-400",
-  "In Progress": "bg-blue-500",
-  Done: "bg-green-500",
+  todo:        "bg-slate-400",
+  in_progress: "bg-blue-500",
+  done:        "bg-green-500",
 };
 
-const STATUSES = ["Todo", "In Progress", "Done"];
+const STATUS_LABELS = {
+  todo:        "To Do",
+  in_progress: "In Progress",
+  done:        "Done",
+};
+
+const STATUSES = ["todo", "in_progress", "done"];
 
 /**
  * Inline status badge that opens a custom dropdown on click.
@@ -61,7 +67,7 @@ const StatusDropdown = ({ task, onStatusChange }) => {
         onClick={() => setOpen((prev) => !prev)}
         className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold border cursor-pointer select-none transition-opacity hover:opacity-80 ${badge}`}
       >
-        {task.status}
+        {STATUS_LABELS[task.status] ?? task.status}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`}
@@ -87,7 +93,7 @@ const StatusDropdown = ({ task, onStatusChange }) => {
                   ${isSelected ? OPTION_ACTIVE[status] : "text-slate-600 hover:bg-slate-50"}`}
               >
                 <span className={`w-2 h-2 rounded-full shrink-0 ${DOT_COLOR[status]}`} />
-                {status}
+                {STATUS_LABELS[status] ?? status}
                 {isSelected && (
                   <Check size={12} className="ml-auto shrink-0" />
                 )}

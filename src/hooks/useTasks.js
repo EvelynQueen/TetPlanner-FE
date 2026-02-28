@@ -4,12 +4,12 @@
 import { getTasks, getTaskById, createTask, updateTask, deleteTask } from "../service/taskService";
 
 const PAGE_SIZE = 10;
-const PRIORITY_WEIGHT = { High: 3, Medium: 2, Low: 1 };
+const PRIORITY_WEIGHT = { high: 3, medium: 2, low: 1 };
 
 const sortTasks = (arr) =>
   [...arr].sort((a, b) => {
-    const da = a.date ? new Date(a.date).getTime() : Infinity;
-    const db = b.date ? new Date(b.date).getTime() : Infinity;
+    const da = a.due_date ? new Date(a.due_date).getTime() : Infinity;
+    const db = b.due_date ? new Date(b.due_date).getTime() : Infinity;
     if (da !== db) return da - db;
     return (PRIORITY_WEIGHT[b.priority] ?? 0) - (PRIORITY_WEIGHT[a.priority] ?? 0);
   });

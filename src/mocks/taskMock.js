@@ -1,235 +1,236 @@
-// ─── Dummy Task Data ───────────────────────────────────────────────────────────
+// ─── Dummy Task Data (API-Aligned Version) ───────────────────────────────────
 // Replace this file with real API integration when the backend is ready.
 
-/** Master list of task categories – import this wherever a category picker is needed. */
-export const TASK_CATEGORIES = [
-  "Dọn dẹp & Trang trí",
-  "Ẩm thực",
-  "Lễ nghi & Văn hóa",
-  "Mua sắm",
-  "Gia đình",
-  "Phương tiện",
-  "Khác",
-];
-
 const DELAY = 500; // ms – simulates network latency
-
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** In-memory store so create/update/delete persist within the session */
-let _tasks = [
-  {
-    id: 1,
-    title: "Dọn dẹp nhà cửa",
-    category: "Dọn dẹp & Trang trí",
-    priority: "Low",
-    status: "Todo",
-    date: "2026-02-01",
-    time: "08:00",
-    budget: 0,
-    note: "",
-  },
-  {
-    id: 2,
-    title: "Mua hoa đào / hoa mai",
-    category: "Dọn dẹp & Trang trí",
-    priority: "Medium",
-    status: "Todo",
-    date: "2026-02-05",
-    time: "09:00",
-    budget: 500000,
-    note: "Chọn cành đẹp, không bị rụng lá",
-  },
-  {
-    id: 3,
-    title: "Gói bánh chưng / bánh tét",
-    category: "Ẩm thực",
-    priority: "High",
-    status: "In Progress",
-    date: "2026-02-08",
-    time: "06:00",
-    budget: 300000,
-    note: "Cần lá dong tươi",
-  },
-  {
-    id: 4,
-    title: "Chuẩn bị phong bì lì xì",
-    category: "Lễ nghi & Văn hóa",
-    priority: "High",
-    status: "Todo",
-    date: "2026-01-28",
-    time: "10:00",
-    budget: 2000000,
-    note: "Mệnh giá: 50k, 100k, 200k",
-  },
-  {
-    id: 5,
-    title: "Mua sắm thực phẩm Tết",
-    category: "Mua sắm",
-    priority: "High",
-    status: "In Progress",
-    date: "2026-02-03",
-    time: "07:00",
-    budget: 3000000,
-    note: "Mứt, hạt dưa, nước ngọt, bia",
-  },
-  {
-    id: 6,
-    title: "Trang trí cây thông / góc Tết",
-    category: "Dọn dẹp & Trang trí",
-    priority: "Low",
-    status: "Done",
-    date: "2026-01-25",
-    time: "14:00",
-    budget: 200000,
-    note: "",
-  },
-  {
-    id: 7,
-    title: "Đặt lịch về quê",
-    category: "Gia đình",
-    priority: "High",
-    status: "Done",
-    date: "2026-01-20",
-    time: "08:00",
-    budget: 0,
-    note: "Vé xe về quê ngày 27 tháng Chạp",
-  },
-  {
-    id: 8,
-    title: "Mua quà biếu cho ông bà",
-    category: "Gia đình",
-    priority: "Medium",
-    status: "Todo",
-    date: "2026-02-06",
-    time: "09:30",
-    budget: 1000000,
-    note: "Giỏ quà, trái cây, bánh kẹo",
-  },
-  {
-    id: 9,
-    title: "Vệ sinh & bảo dưỡng xe",
-    category: "Phương tiện",
-    priority: "Medium",
-    status: "Todo",
-    date: "2026-02-04",
-    time: "08:00",
-    budget: 300000,
-    note: "Kiểm tra dầu, lốp xe trước khi đi",
-  },
-  {
-    id: 10,
-    title: "Nấu mâm cúng tất niên",
-    category: "Ẩm thực",
-    priority: "High",
-    status: "Todo",
-    date: "2026-02-09",
-    time: "11:00",
-    budget: 800000,
-    note: "Gà luộc, xôi gấc, canh măng, nem",
-  },
-  {
-    id: 11,
-    title: "Chụp ảnh gia đình ngày Tết",
-    category: "Lễ nghi & Văn hóa",
-    priority: "Low",
-    status: "Todo",
-    date: "2026-02-10",
-    time: "10:00",
-    budget: 0,
-    note: "Mặc áo dài truyền thống",
-  },
-  {
-    id: 12,
-    title: "Đi chúc Tết họ hàng",
-    category: "Lễ nghi & Văn hóa",
-    priority: "Medium",
-    status: "Todo",
-    date: "2026-02-11",
-    time: "08:00",
-    budget: 0,
-    note: "Mùng 1 chúc nội, mùng 2 chúc ngoại",
-  },
+// Simple UUID generator (no external library needed)
+const generateUUID = () =>
+  "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+
+// ─── Mock Category & Occasion IDs (simulate DB IDs) ──────────────────────────
+
+export const TASK_CATEGORIES = [
+  { id: "11111111-1111-1111-1111-111111111111", name: "Dọn dẹp & Trang trí" },
+  { id: "22222222-2222-2222-2222-222222222222", name: "Ẩm thực" },
+  { id: "33333333-3333-3333-3333-333333333333", name: "Lễ nghi & Văn hóa" },
+  { id: "44444444-4444-4444-4444-444444444444", name: "Gia đình" },
+  { id: "55555555-5555-5555-5555-555555555555", name: "Mua sắm" },
+  { id: "66666666-6666-6666-6666-666666666666", name: "Phương tiện" },
+  { id: "77777777-7777-7777-7777-777777777777", name: "Khác" },
 ];
 
-let _nextId = _tasks.length + 1;
+export const MOCK_OCCASION_ID =
+  "99999999-9999-9999-9999-999999999999";
+
+// ─── In-memory Task Store ─────────────────────────────────────────────────────
+
+let _tasks = [
+  {
+    id: generateUUID(),
+    title: "Dọn dẹp nhà cửa",
+    description: "Lau dọn kỹ trước Tết.",
+    priority: "low",
+    status: "todo",
+    category_id: TASK_CATEGORIES[0].id,
+    occasion_id: MOCK_OCCASION_ID,
+    start_date: "2026-02-01",
+    start_time: "08:00",
+    due_date: "2026-02-01",
+    due_time: "17:00",
+    created_at: new Date().toISOString(),
+    updated_at: null,
+  },
+  {
+    id: generateUUID(),
+    title: "Gói bánh chưng",
+    description: "Chuẩn bị lá dong và nếp ngon.",
+    priority: "high",
+    status: "in_progress",
+    category_id: TASK_CATEGORIES[1].id,
+    occasion_id: MOCK_OCCASION_ID,
+    start_date: "2026-02-08",
+    start_time: "06:00",
+    due_date: "2026-02-08",
+    due_time: "12:00",
+    created_at: new Date().toISOString(),
+    updated_at: null,
+  },
+  {
+    id: generateUUID(),
+    title: "Chuẩn bị phong bì lì xì",
+    description: "Mệnh giá 50k, 100k, 200k.",
+    priority: "medium",
+    status: "todo",
+    category_id: TASK_CATEGORIES[2].id,
+    occasion_id: MOCK_OCCASION_ID,
+    start_date: "2026-01-28",
+    start_time: "10:00",
+    due_date: "2026-01-28",
+    due_time: "12:00",
+    created_at: new Date().toISOString(),
+    updated_at: null,
+  },
+{
+    id: generateUUID(),
+    title: "Mua sắm quần áo Tết",
+    description: "Mua áo dài, quần tây cho cả gia đình.",
+    priority: "medium",
+    status: "todo",
+    category_id: TASK_CATEGORIES[4].id,
+    occasion_id: MOCK_OCCASION_ID,
+    start_date: "2026-01-20",
+    start_time: "09:00",
+    due_date: "2026-01-25",
+    due_time: "18:00",
+    created_at: new Date().toISOString(),
+    updated_at: null,
+},
+{
+    id: generateUUID(),
+    title: "Kiểm tra xe máy",
+    description: "Thay dầu, kiểm tra phanh, lốp.",
+    priority: "high",
+    status: "todo",
+    category_id: TASK_CATEGORIES[5].id,
+    occasion_id: MOCK_OCCASION_ID,
+    start_date: "2026-01-15",
+    start_time: "07:00",
+    due_date: "2026-01-15",
+    due_time: "11:00",
+    created_at: new Date().toISOString(),
+    updated_at: null,
+},
+{
+    id: generateUUID(),
+    title: "Gọi bác, cô thăm hỏi",
+    description: "Liên hệ các thành viên gia đình.",
+    priority: "low",
+    status: "todo",
+    category_id: TASK_CATEGORIES[3].id,
+    occasion_id: MOCK_OCCASION_ID,
+    start_date: "2026-01-25",
+    start_time: "14:00",
+    due_date: "2026-01-30",
+    due_time: "20:00",
+    created_at: new Date().toISOString(),
+    updated_at: null,
+},
+];
 
 // ─── Mock API Functions ────────────────────────────────────────────────────────
 
 /**
- * Get a single task by id.
- * @param {number} id
- * @returns {Promise<Task>}
+ * Get single task by id
  */
 export const mockGetTaskById = async (id) => {
   await delay(DELAY);
-  const task = _tasks.find((t) => t.id === Number(id));
-  if (!task) throw new Error(`Task #${id} not found`);
-  return task;
+  const task = _tasks.find((t) => t.id === id);
+  if (!task) throw new Error("Task not found");
+  return {
+    status: "success",
+    data: task,
+  };
 };
 
 /**
- * Get paginated tasks.
- * @param {number} page  1-based
- * @param {number} size
- * @returns {Promise<{ content: Task[], meta: PageMeta }>}
+ * Get paginated tasks
  */
 export const mockGetTasks = async (page = 1, size = 10) => {
   await delay(DELAY);
+
   const start = (page - 1) * size;
   const content = _tasks.slice(start, start + size);
+
   return {
-    content,
-    meta: {
-      page,
-      size,
-      totalElements: _tasks.length,
-      totalPages: Math.ceil(_tasks.length / size),
+    status: "success",
+    data: {
+      content,
+      meta: {
+        page,
+        size,
+        totalElements: _tasks.length,
+        totalPages: Math.ceil(_tasks.length / size),
+      },
     },
   };
 };
 
 /**
- * Create a new task.
- * @param {object} data
- * @returns {Promise<Task>}
+ * Create task
  */
 export const mockCreateTask = async (data) => {
   await delay(DELAY);
-  const task = {
-    id: _nextId++,
-    date: new Date().toISOString().split("T")[0],
-    time: "",
-    budget: 0,
-    note: "",
-    ...data,
+
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
+
+  const newTask = {
+    id: generateUUID(),
+    title: data.title,
+    description: data.description || null,
+    priority: data.priority || "medium",
+    status: data.status || "todo",
+    category_id: data.category_id || null,
+    occasion_id: data.occasion_id || null,
+    start_date: data.start_date || today,
+    start_time: data.start_time || "00:00",
+    due_date: data.due_date || today,
+    due_time: data.due_time || "23:59",
+    created_at: now.toISOString(),
+    updated_at: null,
   };
-  _tasks = [..._tasks, task];
-  return task;
+
+  _tasks = [..._tasks, newTask];
+
+  return {
+    status: "success",
+    message: "Task created successfully.",
+    data: newTask,
+  };
 };
 
 /**
- * Update an existing task.
- * @param {number} id
- * @param {object} data
- * @returns {Promise<Task>}
+ * Update task
  */
 export const mockUpdateTask = async (id, data) => {
   await delay(DELAY);
-  const idx = _tasks.findIndex((t) => t.id === id);
-  if (idx === -1) throw new Error(`Task #${id} not found`);
-  const updated = { ..._tasks[idx], ...data };
-  _tasks = _tasks.map((t) => (t.id === id ? updated : t));
-  return updated;
+
+  const index = _tasks.findIndex((t) => t.id === id);
+  if (index === -1) throw new Error("Task not found");
+
+  const updated = {
+    ..._tasks[index],
+    ...data,
+    updated_at: new Date().toISOString(),
+  };
+
+  _tasks[index] = updated;
+
+  return {
+    status: "success",
+    message: "Task updated successfully.",
+    data: updated,
+  };
 };
 
 /**
- * Delete a task by id.
- * @param {number} id
- * @returns {Promise<void>}
+ * Delete task
  */
 export const mockDeleteTask = async (id) => {
   await delay(DELAY);
-  if (!_tasks.some((t) => t.id === id)) throw new Error(`Task #${id} not found`);
+
+  const exists = _tasks.some((t) => t.id === id);
+  if (!exists) throw new Error("Task not found");
+
   _tasks = _tasks.filter((t) => t.id !== id);
+
+  return {
+    status: "success",
+    message: "Task deleted successfully.",
+  };
 };

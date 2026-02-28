@@ -1,24 +1,38 @@
 ﻿
 import { useState, useRef, useEffect } from "react";
 import { Plus, Edit3, Loader2, Calendar, Clock, Save, ChevronDown, ChevronLeft, ChevronRight, Circle, CheckCircle2 } from "lucide-react";
-import { TASK_CATEGORIES as CATEGORIES } from "../../mocks/taskMock";
+import { TASK_CATEGORIES as CATEGORIES } from "../mocks/taskMock";
 
 // ── Form constants ─────────────────────────────────────────────────────────────
 // CATEGORIES imported from taskMock – swap for a real API call when backend is ready
-const PRIORITIES = ["Low", "Medium", "High"];
-const STATUSES = [
-  { value: "Todo",        label: "To Do",       icon: Circle },
-  { value: "In Progress", label: "In Progress", icon: Clock },
-  { value: "Done",        label: "Done",        icon: CheckCircle2 },
+const PRIORITIES = [
+  { value: "low",    label: "Low"    },
+  { value: "medium", label: "Medium" },
+  { value: "high",   label: "High"   },
 ];
-const EMPTY = { title: "", category: "", priority: "Medium", status: "Todo", date: "", time: "", budget: "", note: "" };
+const STATUSES = [
+  { value: "todo",        label: "To Do",       icon: Circle      },
+  { value: "in_progress", label: "In Progress", icon: Clock       },
+  { value: "done",        label: "Done",        icon: CheckCircle2 },
+];
+const EMPTY = {
+  title:       "",
+  description: "",
+  category_id: "",
+  priority:    "medium",
+  status:      "todo",
+  start_date:  "",
+  start_time:  "",
+  due_date:    "",
+  due_time:    "",
+};
 
 const validate = (v) => {
   const e = {};
-  if (!v.title.trim()) e.title    = "Title is required";
-  if (!v.category)     e.category = "Category is required";
-  if (!v.priority)     e.priority = "Priority is required";
-  if (!v.status)       e.status   = "Status is required";
+  if (!v.title.trim()) e.title       = "Title is required";
+  if (!v.category_id)  e.category_id = "Category is required";
+  if (!v.priority)     e.priority    = "Priority is required";
+  if (!v.status)       e.status      = "Status is required";
   return e;
 };
 
@@ -282,9 +296,9 @@ export function TaskForm({ initialValues = EMPTY, onSubmit, onCancel, mode = "cr
     e.preventDefault();
     const errs = validate(values);
     setErrors(errs);
-    setTouched({ title: true, category: true, priority: true, status: true });
+    setTouched({ title: true, category_id: true, priority: true, status: true });
     if (Object.keys(errs).length > 0) return;
-    onSubmit({ ...values, budget: values.budget ? Number(values.budget) : 0 });
+    onSubmit({ ...values });
   };
 
   const isValid = Object.keys(validate(values)).length === 0;
@@ -320,42 +334,51 @@ export function TaskForm({ initialValues = EMPTY, onSubmit, onCancel, mode = "cr
           <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">Category <span className="text-rose-600">*</span></label>
           <div className="relative">
             <select
-              value={values.category}
-              onChange={(e) => set("category", e.target.value)}
-              onBlur={() => blur("category")}
-              className={`${inputCls("category")} appearance-none pr-10 cursor-pointer`}
+              value={values.category_id}
+              onChange={(e) => set("category_id", e.target.value)}
+              onBlur={() => blur("category_id")}
+              className={`${inputCls("category_id")} appearance-none pr-10 cursor-pointer`}
             >
               <option value="">Select category....</option>
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
             <ChevronDown size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           </div>
-          {err("category") && <p className="text-xs text-red-500">{errors.category}</p>}
+          {err("category_id") && <p className="text-xs text-red-500">{errors.category_id}</p>}
         </div>
 
         <div className="flex flex-col gap-2 flex-1">
           <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">Priority</label>
           <div className="flex bg-slate-100 rounded-xl p-1 gap-0.5">
-            {PRIORITIES.map((p) => (
+            {PRIORITIES.map(({ value: p, label }) => (
               <button
                 key={p}
                 type="button"
                 onClick={() => set("priority", p)}
                 className={`flex-1 py-2 rounded-lg text-xs font-bold font-['Plus_Jakarta_Sans'] transition ${values.priority === p ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
               >
-                {p}
+                {label}
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Timeline */}
+      {/* Timeline — Start */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">Timeline</label>
+        <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">Start</label>
         <div className="flex gap-4">
-          <DatePicker value={values.date} onChange={(v) => set("date", v)} />
-          <TimePicker value={values.time} onChange={(v) => set("time", v)} />
+          <DatePicker value={values.start_date} onChange={(v) => set("start_date", v)} />
+          <TimePicker value={values.start_time} onChange={(v) => set("start_time", v)} />
+        </div>
+      </div>
+
+      {/* Timeline — Due */}
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">Due</label>
+        <div className="flex gap-4">
+          <DatePicker value={values.due_date} onChange={(v) => set("due_date", v)} />
+          <TimePicker value={values.due_time} onChange={(v) => set("due_time", v)} />
         </div>
       </div>
 
@@ -378,30 +401,14 @@ export function TaskForm({ initialValues = EMPTY, onSubmit, onCancel, mode = "cr
         {err("status") && <p className="text-xs text-red-500">{errors.status}</p>}
       </div>
 
-      {/* Budget */}
+      {/* Description */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">Estimated Budget (VNĐ)</label>
-        <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold font-['Plus_Jakarta_Sans'] text-base">₫</span>
-          <input
-            type="number"
-            min="0"
-            placeholder="0"
-            value={values.budget}
-            onChange={(e) => set("budget", e.target.value)}
-            className="w-full pl-9 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-base text-slate-900 font-['Plus_Jakarta_Sans'] outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition"
-          />
-        </div>
-      </div>
-
-      {/* Note */}
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">Note</label>
+        <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">Description</label>
         <textarea
           rows={3}
-          placeholder="Add additional notes..."
-          value={values.note}
-          onChange={(e) => set("note", e.target.value)}
+          placeholder="Add task description..."
+          value={values.description}
+          onChange={(e) => set("description", e.target.value)}
           className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-base text-slate-900 font-['Plus_Jakarta_Sans'] outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition resize-none"
         />
       </div>
@@ -418,7 +425,7 @@ export function TaskForm({ initialValues = EMPTY, onSubmit, onCancel, mode = "cr
         <button
           type="submit"
           disabled={!isValid || isSubmitting}
-          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-rose-600 text-white font-bold text-base font-['Plus_Jakarta_Sans'] shadow-[0_4px_6px_0_#fecdd3] hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[var(--color-primary-500)] text-[var(--color-text-inverse)] font-bold text-base font-['Plus_Jakarta_Sans'] shadow-[var(--btn-primary-shadow)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition"
         >
           <Save size={18} />
           {isSubmitting ? "Saving…" : "Save Task"}
@@ -459,7 +466,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData =
       <div className="w-[576px] bg-white rounded-2xl border border-slate-200 shadow-[0_25px_50px_0_rgba(0,0,0,0.25)] overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-start justify-between px-8 py-6 bg-rose-600">
+        <div className="flex items-start justify-between px-8 py-6 bg-[var(--color-primary-500)]">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <Icon size={24} className="text-white" />

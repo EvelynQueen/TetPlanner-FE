@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Edit3 } from "lucide-react";
-import { TaskForm } from "../components/task/TaskFormModal";
-import useTasks from "../hooks/useTasks";
+import { TaskForm } from "../components/TaskFormModal";
+import useTask from "../hooks/useTask";
 
 export default function EditTask() {
   const { id }     = useParams();
   const navigate   = useNavigate();
-  // TODO: replace with real service when backend is ready (no changes needed here)
-  const { fetchTaskById, handleUpdate } = useTasks();
+  const { fetchTaskById, handleUpdate } = useTask();
 
   const [initialValues, setInitialValues] = useState(null);
   const [loadError,     setLoadError]     = useState(null);
@@ -29,10 +28,10 @@ export default function EditTask() {
   const handleSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      await handleUpdate(Number(id), data);
+      await handleUpdate(id, data);
       navigate("/tasks");
-    } catch (err) {
-      alert("Failed to update task: " + err.message);
+    } catch {
+      // Error already toasted by TaskProvider — stay on form
     } finally {
       setIsSubmitting(false);
     }
@@ -45,7 +44,7 @@ export default function EditTask() {
       <div className="w-[576px] bg-white rounded-2xl border border-slate-200 shadow-[0_25px_50px_0_rgba(0,0,0,0.25)] overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-start justify-between px-8 py-6 bg-rose-600">
+        <div className="flex items-start justify-between px-8 py-6 bg-[var(--color-primary-500)]">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <Edit3 size={24} className="text-white" />

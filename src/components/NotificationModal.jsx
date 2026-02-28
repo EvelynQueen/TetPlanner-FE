@@ -52,7 +52,7 @@ export default function NotificationModal({ type = "success", title, message, on
                   onClick={onClick}
                   className={
                     variant === "primary"
-                      ? "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 text-white font-medium font-['Plus_Jakarta_Sans'] shadow-[0_4px_6px_0_rgba(225,29,72,0.2)] hover:bg-rose-700 transition"
+                      ? "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary-500)] text-[var(--color-text-inverse)] font-medium font-['Plus_Jakarta_Sans'] shadow-[var(--btn-primary-shadow)] hover:opacity-90 transition"
                       : "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-100 text-slate-900 font-medium font-['Plus_Jakarta_Sans'] hover:bg-slate-200 transition"
                   }
                 >

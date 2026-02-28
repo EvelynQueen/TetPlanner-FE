@@ -10,21 +10,20 @@ import {
   SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
-  AlertCircle,
   RotateCcw,
 } from "lucide-react";
-import useTasks from "../hooks/useTasks";
+import useTask from "../hooks/useTask";
 import NotificationModal  from "../components/NotificationModal";
-import TaskFormModal      from "../components/task/TaskFormModal";
-import TaskTable          from "../components/task/TaskTable";
-import TaskRow            from "../components/task/TaskRow";
-import DeleteTaskModal    from "../components/task/DeleteTaskModal";
+import TaskFormModal      from "../components/TaskFormModal";
+import TaskTable          from "../components/TaskTable";
+import TaskRow            from "../components/TaskRow";
+import DeleteTaskModal    from "../components/DeleteTaskModal";
 
 // Table column definitions
 const TASK_COLUMNS = [
   { key: "title",    label: "Title" },
   { key: "category", label: "Category" },
-  { key: "date",     label: "Due Date" },
+  { key: "schedule", label: "Timeline" },
   { key: "priority", label: "Priority" },
   { key: "status",   label: "Status" },
   { key: "actions",  label: "Actions", align: "right" },
@@ -43,16 +42,15 @@ const Tasks = () => {
   const {
     tasks,
     loading,
-    error,
     page,
     meta,
-    fetchTasks,
-    createTaskHandler,
-    updateTaskHandler,
-    updateStatusHandler,
-    deleteTaskHandler,
+    handleCreate,
+    handleUpdate,
+    handleDelete,
+    handleRestore,
+    handleStatusUpdate,
     handlePageChange,
-  } = useTasks();
+  } = useTask();
 
   const [search,       setSearch]       = useState("");
   // undefined = closed | null = create | Task object = edit
@@ -68,10 +66,10 @@ const Tasks = () => {
   const handleFormSubmit = async (form) => {
     if (modalTask?.id) {
       const prevTask = { ...modalTask };
-      const updated  = await updateTaskHandler(modalTask.id, form);
+      const updated  = await handleUpdate(modalTask.id, form);
       setNotif({ type: "edit", task: updated, prevTask });
     } else {
-      const created = await createTaskHandler(form);
+      const created = await handleCreate(form);
       setNotif({ type: "create", task: created });
     }
   };
@@ -79,7 +77,7 @@ const Tasks = () => {
   const handleDeleteConfirm = async () => {
     const deleted = deleteTarget;
     setDeleteTarget(null);
-    await deleteTaskHandler(deleted.id);
+    await handleDelete(deleted.id);
     setNotif({ type: "delete", task: deleted });
   };
 
@@ -113,7 +111,7 @@ const Tasks = () => {
               icon: RotateCcw,
               variant: "secondary",
               onClick: async () => {
-                if (notif.task) await deleteTaskHandler(notif.task.id);
+                if (notif.task) await handleDelete(notif.task.id);
                 setNotif(null);
               },
             },
@@ -145,7 +143,7 @@ const Tasks = () => {
               icon: RotateCcw,
               variant: "secondary",
               onClick: async () => {
-                if (notif.prevTask) await updateTaskHandler(notif.prevTask.id, notif.prevTask);
+                if (notif.prevTask) await handleUpdate(notif.prevTask.id, notif.prevTask);
                 setNotif(null);
               },
             },
@@ -171,7 +169,7 @@ const Tasks = () => {
               icon: RotateCcw,
               variant: "secondary",
               onClick: async () => {
-                if (notif.task) await createTaskHandler(notif.task);
+                if (notif.task) await handleRestore(notif.task);
                 setNotif(null);
               },
             },
@@ -212,7 +210,7 @@ const Tasks = () => {
             </div>
             <button
               onClick={() => setModalTask(null)}
-              className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-medium shadow-[0_4px_6px_0_rgba(225,29,72,0.2)] transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary-500)] hover:opacity-90 text-[var(--color-text-inverse)] rounded-xl text-sm font-medium shadow-[var(--btn-primary-shadow)] transition-opacity"
             >
               <Plus size={14} />
               New Task
@@ -256,20 +254,6 @@ const Tasks = () => {
             </div>
           </div>
 
-          {/* Error Banner */}
-          {error && (
-            <div className="flex items-center gap-3 px-5 py-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-600">
-              <AlertCircle size={16} className="shrink-0" />
-              <span>{error}</span>
-              <button
-                onClick={() => fetchTasks()}
-                className="ml-auto text-xs font-semibold underline hover:no-underline"
-              >
-                Retry
-              </button>
-            </div>
-          )}
-
           {/* Task Table */}
           <TaskTable
             columns={TASK_COLUMNS}
@@ -282,7 +266,7 @@ const Tasks = () => {
                 task={task}
                 onEdit={(t) => setModalTask(t)}
                 onDelete={(t) => setDeleteTarget(t)}
-                onStatusChange={updateStatusHandler}
+                onStatusChange={handleStatusUpdate}
               />
             )}
             pagination={

@@ -3,11 +3,8 @@ import "./App.css";
 import SideBar from "./components/SideBar";
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
-import CreateTask from "./pages/CreateTask";
-import EditTask from "./pages/EditTask";
 import Shopping from "./pages/Shopping";
 import Calendar from "./pages/Calendar";
-
 import SignUp from "./pages/auth/SignUp.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
 import LoginForm from "./pages/Login";
@@ -15,6 +12,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ResetPassSuccess from "./pages/ResetPassSuccess";
 import { ToastContainer } from "react-toastify";
+import TaskProvider from "./contexts/TaskProvider";
 
 function App() {
   return (
@@ -32,12 +30,14 @@ function App() {
           element={
             <div className="w-full h-screen flex bg-(--color-bg-main)">
               <SideBar />
-              <Routes>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/tasks" element={<Tasks />} />
-                <Route path="/shopping" element={<Shopping />} />
-                <Route path="/calendar" element={<Calendar />} />
-              </Routes>
+              <TaskProvider>
+                <Routes>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/tasks" element={<Tasks />} />
+                  <Route path="/shopping" element={<Shopping />} />
+                  <Route path="/calendar" element={<Calendar />} />
+                </Routes>
+              </TaskProvider>
             </div>
           }
         />

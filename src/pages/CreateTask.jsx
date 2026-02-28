@@ -1,16 +1,14 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, RotateCcw } from "lucide-react";
-import { TaskForm } from "../components/task/TaskFormModal";
+import { TaskForm } from "../components/TaskFormModal";
 import NotificationModal from "../components/NotificationModal";
-import useTasks from "../hooks/useTasks";
+import useTask from "../hooks/useTask";
 
-// ── Page ───────────────────────────────────────────────────────────────────────
+// ── Page ───────────────────────────────────────────────────────────────────────────────
 export default function CreateTask() {
   const navigate = useNavigate();
-  // TODO: replace with real service when backend is ready (no changes needed here)
-  const { handleCreate, handleDelete } = useTasks();
+  const { handleCreate, handleDelete } = useTask();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdTask,  setCreatedTask]  = useState(null); // null = show form
@@ -20,8 +18,8 @@ export default function CreateTask() {
     try {
       const task = await handleCreate(data);
       setCreatedTask(task);
-    } catch (err) {
-      alert("Failed to create task: " + err.message);
+    } catch {
+      // Error already toasted by TaskProvider — stay on form
     } finally {
       setIsSubmitting(false);
     }
@@ -64,7 +62,7 @@ export default function CreateTask() {
       <div className="w-[576px] bg-white rounded-2xl border border-slate-200 shadow-[0_25px_50px_0_rgba(0,0,0,0.25)] overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-start justify-between px-8 py-6 bg-rose-600">
+        <div className="flex items-start justify-between px-8 py-6 bg-[var(--color-primary-500)]">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <Plus size={24} className="text-white" />
