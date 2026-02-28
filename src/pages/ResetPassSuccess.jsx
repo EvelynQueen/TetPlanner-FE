@@ -39,7 +39,7 @@ function ResetPassSuccess() {
           {/* BUTTON LOGIN */}
           <button
             onClick={() => navigate("/")}
-            className="w-[343px] h-[50px] mx-auto rounded-[10px] bg-[#E11D48] text-white font-semibold transition-all hover:opacity-90 active:scale-95 shadow-lg shadow-red-100"
+            className="w-85.75 h-12.5 mx-auto rounded-[10px] bg-[#E11D48] text-white font-semibold transition-all hover:opacity-90 active:scale-95 shadow-lg shadow-red-100"
           >
             LOGIN
           </button>
