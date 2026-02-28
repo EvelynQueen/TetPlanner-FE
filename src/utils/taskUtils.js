@@ -10,6 +10,19 @@ import { TASK_CATEGORIES } from "../mocks/taskMock";
 export const isMultiDayTask = (task) =>
   Boolean(task.start_date && task.due_date && task.start_date !== task.due_date);
 
+/**
+ * Returns true when the task is past its due date and not yet done.
+ * Comparison is date-only (ignores time) so a task due today is NOT overdue.
+ * @param {object} task
+ * @returns {boolean}
+ */
+export const isOverdue = (task) => {
+  if (!task.due_date || task.status === "done") return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return new Date(task.due_date + "T00:00:00") < today;
+};
+
 // ── Formatters ─────────────────────────────────────────────────────────────────
 
 /**

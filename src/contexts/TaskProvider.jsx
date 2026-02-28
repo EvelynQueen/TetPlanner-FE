@@ -28,14 +28,25 @@ const PRIORITY_WEIGHT = { high: 3, medium: 2, low: 1 };
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
 /**
- * Sort tasks by due_date asc, then priority desc.
- * Tasks without a due_date are pushed to the end.
+ * Sort rules (applied on every mutation):
+ *   1. "done" tasks sink to the bottom.
+ *   2. Active tasks: sort by start_date asc (soonest at top).
+ *      Tasks without a start_date come after all dated tasks.
+ *   3. Same start_date: sort by priority desc (high > medium > low).
  */
 const sortTasks = (arr) =>
   [...arr].sort((a, b) => {
-    const da = a.due_date ? new Date(a.due_date).getTime() : Infinity;
-    const db = b.due_date ? new Date(b.due_date).getTime() : Infinity;
+    // Rule 1 – done sinks
+    const aDone = a.status === "done";
+    const bDone = b.status === "done";
+    if (aDone !== bDone) return aDone ? 1 : -1;
+
+    // Rule 2 – start_date asc
+    const da = a.start_date ? new Date(a.start_date + "T00:00:00").getTime() : Infinity;
+    const db = b.start_date ? new Date(b.start_date + "T00:00:00").getTime() : Infinity;
     if (da !== db) return da - db;
+
+    // Rule 3 – priority desc within the same day
     return (PRIORITY_WEIGHT[b.priority] ?? 0) - (PRIORITY_WEIGHT[a.priority] ?? 0);
   });
 

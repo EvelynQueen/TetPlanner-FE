@@ -33,6 +33,8 @@ const validate = (v) => {
   if (!v.category_id)  e.category_id = "Category is required";
   if (!v.priority)     e.priority    = "Priority is required";
   if (!v.status)       e.status      = "Status is required";
+  if (v.start_date && v.due_date && v.due_date < v.start_date)
+    e.due_date = "Due date cannot be before start date";
   return e;
 };
 
@@ -296,12 +298,18 @@ export function TaskForm({ initialValues = EMPTY, onSubmit, onCancel, mode = "cr
     e.preventDefault();
     const errs = validate(values);
     setErrors(errs);
-    setTouched({ title: true, category_id: true, priority: true, status: true });
+    setTouched({ title: true, category_id: true, priority: true, status: true, due_date: true });
     if (Object.keys(errs).length > 0) return;
     onSubmit({ ...values });
   };
 
   const isValid = Object.keys(validate(values)).length === 0;
+
+  // Cross-field: show in real-time as soon as both dates are filled
+  const dueDateError =
+    values.start_date && values.due_date && values.due_date < values.start_date
+      ? "Due date cannot be before start date"
+      : null;
 
   const inputCls = (field) =>
     `w-full px-4 py-3 rounded-xl border font-['Plus_Jakarta_Sans'] text-base text-slate-900 outline-none transition ` +
@@ -376,10 +384,15 @@ export function TaskForm({ initialValues = EMPTY, onSubmit, onCancel, mode = "cr
       {/* Timeline — Due */}
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">Due</label>
-        <div className="flex gap-4">
+        <div className={`flex gap-4 ${dueDateError ? "rounded-xl ring-2 ring-red-300" : ""}`}>
           <DatePicker value={values.due_date} onChange={(v) => set("due_date", v)} />
           <TimePicker value={values.due_time} onChange={(v) => set("due_time", v)} />
         </div>
+        {dueDateError && (
+          <p className="text-xs text-red-500 font-['Plus_Jakarta_Sans'] flex items-center gap-1">
+            {dueDateError}
+          </p>
+        )}
       </div>
 
       {/* Status */}

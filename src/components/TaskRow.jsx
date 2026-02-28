@@ -11,7 +11,7 @@
  */
 import { Pencil, Trash2 } from "lucide-react";
 import StatusDropdown from "./StatusDropdown";
-import { getCategoryName, formatTaskSchedule } from "../utils/taskUtils";
+import { getCategoryName, formatTaskSchedule, isOverdue } from "../utils/taskUtils";
 
 // ── Style maps (task-specific) ─────────────────────────────────────────────────
 const CATEGORY_STYLES = {
@@ -60,15 +60,26 @@ const PriorityBadge = ({ priority }) => (
 
 // ── Row ────────────────────────────────────────────────────────────────────────
 export default function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
-  const isDone = task.status === "done";
+  const isDone    = task.status === "done";
+  const overdue   = isOverdue(task);
 
   return (
-    <tr className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+    <tr className={`border-b transition-colors
+      ${ overdue
+        ? "bg-red-50/70 border-red-100 hover:bg-red-50"
+        : isDone
+          ? "bg-slate-50/40 border-slate-100 opacity-60 hover:opacity-80 hover:bg-slate-50"
+          : "border-slate-100 hover:bg-slate-50/50"
+      }`}>
       {/* Title */}
       <td className="pl-6 pr-6 py-4">
         <div className="flex items-center gap-3">
           <span className={`w-2 h-2 rounded-full shrink-0 ${PRIORITY_DOT[task.priority] ?? "bg-slate-300"}`} />
-          <span className={`text-sm font-semibold ${isDone ? "text-slate-400 line-through" : "text-slate-800"}`}>
+          <span className={`text-sm font-semibold ${
+            isDone   ? "text-slate-400 line-through" :
+            overdue  ? "text-red-600"                :
+                       "text-slate-800"
+          }`}>
             {task.title}
           </span>
         </div>
@@ -80,8 +91,15 @@ export default function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
       </td>
 
       {/* Schedule */}
-      <td className="px-6 py-4 text-sm font-medium text-slate-500 whitespace-nowrap">
-        {formatTaskSchedule(task)}
+      <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
+        <span className={overdue ? "text-red-500" : "text-slate-500"}>
+          {formatTaskSchedule(task)}
+        </span>
+        {overdue && (
+          <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600 uppercase tracking-wide">
+            Overdue
+          </span>
+        )}
       </td>
 
       {/* Priority */}
