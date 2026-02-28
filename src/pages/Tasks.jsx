@@ -2,17 +2,14 @@
 import {
   Plus,
   Search,
-  Download,
-  Tag,
   ChevronDown,
-  LayoutGrid,
-  List,
   SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
   RotateCcw,
 } from "lucide-react";
 import useTask from "../hooks/useTask";
+import TaskHeader         from "../components/task/TaskHeader";
 import NotificationModal  from "../components/NotificationModal";
 import TaskFormModal      from "../components/TaskFormModal";
 import TaskTable          from "../components/TaskTable";
@@ -58,6 +55,8 @@ const Tasks = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   // null = hidden | { task } = show success notification
   const [notif,        setNotif]        = useState(null);
+  // "list" | "kanban"
+  const [view,         setView]         = useState("list");
 
   const filtered = tasks.filter((t) =>
     t.title.toLowerCase().includes(search.toLowerCase())
@@ -187,51 +186,14 @@ const Tasks = () => {
 
       <div className="flex flex-col flex-1 overflow-y-auto bg-slate-50 font-['Plus_Jakarta_Sans']">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 bg-white/80 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-10">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
-              Tet Preparation Tasks
-            </h1>
-            <p className="text-sm text-slate-500">
-              Year of the Horse 2026 &bull; BINH NGO
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex items-center bg-slate-100 rounded-xl p-1 gap-1">
-              <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-slate-500 hover:text-slate-700 transition-colors text-sm font-semibold">
-                <LayoutGrid size={14} />
-                Kanban
-              </button>
-              <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white shadow-sm text-rose-600 text-sm font-semibold">
-                <List size={14} />
-                List
-              </button>
-            </div>
-            <button
-              onClick={() => setModalTask(null)}
-              className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary-500)] hover:opacity-90 text-[var(--color-text-inverse)] rounded-xl text-sm font-medium shadow-[var(--btn-primary-shadow)] transition-opacity"
-            >
-              <Plus size={14} />
-              New Task
-            </button>
-          </div>
-        </div>
+        <TaskHeader
+          currentView={view}
+          onViewChange={setView}
+          onCreateTask={() => setModalTask(null)}
+        />
 
         {/* Body */}
         <div className="flex flex-col gap-6 px-8 py-6">
-          {/* Action row */}
-          <div className="flex items-center justify-end gap-3">
-            <button className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-50 transition-colors">
-              <Download size={16} />
-              Export
-            </button>
-            <button className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-50 transition-colors">
-              <Tag size={16} />
-              Manage Categories
-            </button>
-          </div>
-
           {/* Search + Filters */}
           <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-200">
             <div className="relative flex-1">
