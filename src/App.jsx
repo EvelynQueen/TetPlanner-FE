@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-import { Routes, Route } from "react-router-dom";
-import CreateNewItem from "./pages/shopping-item/CreateNewItem";
-
-function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<CreateNewItem />} />
-    </Routes>
-=======
 import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import SideBar from "./components/SideBar";
@@ -22,6 +12,7 @@ import LoginForm from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ResetPassSuccess from "./pages/ResetPassSuccess";
+import CreateNewItem from "./pages/shopping-item/CreateNewItem";
 import { ToastContainer } from "react-toastify";
 
 function App() {
@@ -42,17 +33,17 @@ function App() {
         hideProgressBar={false}
         theme="colored"
       />
+
+      <div className="w-full h-screen flex bg-(--color-bg-main)">
+        <SideBar />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/shopping" element={<Shopping />} />
+          <Route path="/calendar" element={<Calendar />} />
+        </Routes>
+      </div>
     </>
-    <div className="w-full h-screen flex bg-(--color-bg-main)">
-      <SideBar />
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/tasks" element={<Tasks />} />
-        <Route path="/shopping" element={<Shopping />} />
-        <Route path="/calendar" element={<Calendar />} />
-      </Routes>
-    </div>
->>>>>>> b3837be69cd1775bf4dbfc55cc1f738ced26629e
   );
 }
 export default App;
