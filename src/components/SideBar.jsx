@@ -1,5 +1,5 @@
 import React from "react";
-import TetPlaner from "./TetPlaner";
+import TetPlanner from "./TetPlanner";
 import SideBarButton from "./SideBarButton";
 import { RiDashboardFill } from "react-icons/ri";
 import { RiTaskFill } from "react-icons/ri";
@@ -13,7 +13,7 @@ const SideBar = () => {
     <div className="w-64 shrink-0 h-full p-4 flex flex-col bg-(--color-bg-sidebar) border-r border-(--color-border-light) caret-transparent">
       {/* Top of sidebar */}
       <div className="w-full flex flex-col gap-4">
-        <TetPlaner />
+        <TetPlanner />
 
         <nav className="flex flex-col gap-2 mt-4">
           <SideBarButton icon={RiDashboardFill} content="Dashboard" to="/" />
