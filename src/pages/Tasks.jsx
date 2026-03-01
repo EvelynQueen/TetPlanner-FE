@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import TaskContext           from "../contexts/TaskContext";
 import TaskHeader            from "../components/TaskHeader";
-import NotificationModal     from "../components/NotificationModal";
 import TaskFormModal         from "../components/TaskFormModal";
 import TaskTable             from "../components/TaskTable";
 import TaskRow               from "../components/TaskRow";
@@ -36,7 +35,10 @@ const FilterDropdown = ({ label }) => (
 const Tasks = () => {
   const {
     tasks,
+    categories,
+    occasions,
     loading,
+    fetchTaskById,
     handleCreate,
     handleUpdate,
     handleDelete,
@@ -47,8 +49,6 @@ const Tasks = () => {
   // undefined = closed | null = create | Task object = edit
   const [modalTask,    setModalTask]    = useState(undefined);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  // null = hidden | { task } = show success notification
-  const [notif,        setNotif]        = useState(null);
   // "list" | "kanban"
   const [view,         setView]         = useState("list");
 
@@ -56,16 +56,24 @@ const Tasks = () => {
     t.title.toLowerCase().includes(search.toLowerCase())
   );
 
+  const handleEditClick = async (task) => {
+    // Set partial task to open modal in loading state
+    setModalTask({ id: task.id, _isLoading: true });
+    try {
+      const fullTask = await fetchTaskById(task.id);
+      setModalTask(fullTask);
+    } catch (e) {
+      setModalTask(undefined);
+    }
+  };
+
   const handleFormSubmit = async (form) => {
     if (modalTask?.id) {
-      const prevTask = { ...modalTask };
-      const updated  = await handleUpdate(modalTask.id, form);
+      await handleUpdate(modalTask.id, form);
       setModalTask(undefined);
-      setNotif({ type: "edit", task: updated, prevTask });
     } else {
-      const created = await handleCreate(form);
+      await handleCreate(form);
       setModalTask(undefined);
-      setNotif({ type: "create", task: created });
     }
   };
 
@@ -73,7 +81,6 @@ const Tasks = () => {
     const deleted = deleteTarget;
     setDeleteTarget(null);
     await handleDelete(deleted.id);
-    setNotif({ type: "delete", task: deleted });
   };
 
   return (
@@ -83,83 +90,13 @@ const Tasks = () => {
         isOpen={modalTask !== undefined}
         mode={modalTask?.id ? "edit" : "create"}
         initialData={modalTask ?? undefined}
+        categories={categories}
+        occasions={occasions}
         onClose={() => setModalTask(undefined)}
         onSubmit={handleFormSubmit}
       />
 
-      {/* Create success notification */}
-      {notif?.type === "create" && (
-        <NotificationModal
-          type="success"
-          title="Task Created Successfully!"
-          message={
-            <>
-              Your new task{" "}
-              <span className="font-bold">"{notif.task?.title}"</span>{" "}
-              has been added to your Tết schedule.
-            </>
-          }
-          onClose={() => setNotif(null)}
-          actions={[
-            {
-              label: "Undo",
-              icon: RotateCcw,
-              variant: "secondary",
-              onClick: async () => {
-                if (notif.task) await handleDelete(notif.task.id);
-                setNotif(null);
-              },
-            },
-            {
-              label: "Add Another Task",
-              icon: Plus,
-              variant: "primary",
-              onClick: () => { setNotif(null); setModalTask(null); },
-            },
-          ]}
-        />
-      )}
 
-      {/* Edit success notification */}
-      {notif?.type === "edit" && (
-        <NotificationModal
-          type="success"
-          title="Task Updated Successfully!"
-          message={
-            <>
-              <span className="font-bold">"{notif.task?.title}"</span>{" "}
-              has been updated.
-            </>
-          }
-          onClose={() => setNotif(null)}
-          actions={[
-            {
-              label: "Undo",
-              icon: RotateCcw,
-              variant: "secondary",
-              onClick: async () => {
-                if (notif.prevTask) await handleUpdate(notif.prevTask.id, notif.prevTask);
-                setNotif(null);
-              },
-            },
-          ]}
-        />
-      )}
-
-      {/* Delete success notification */}
-      {notif?.type === "delete" && (
-        <NotificationModal
-          type="success"
-          title="Task Deleted"
-          message={
-            <>
-              <span className="font-bold">"{notif.task?.title}"</span>{" "}
-              has been removed from your schedule.
-            </>
-          }
-          onClose={() => setNotif(null)}
-        />
-      )}
 
       {/* Delete confirmation modal */}
       <DeleteTaskModal
@@ -212,7 +149,7 @@ const Tasks = () => {
                 <TaskRow
                   key={task.id}
                   task={task}
-                  onEdit={(t) => setModalTask(t)}
+                  onEdit={handleEditClick}
                   onDelete={(t) => setDeleteTarget(t)}
                   onStatusChange={handleStatusChange}
                 />
@@ -233,7 +170,7 @@ const Tasks = () => {
           {view === "kanban" && (
             <KanbanBoard
               tasks={filtered}
-              onEdit={(t) => setModalTask(t)}
+              onEdit={handleEditClick}
               onDelete={(t) => setDeleteTarget(t)}
               onAddTask={() => setModalTask(null)}
             />

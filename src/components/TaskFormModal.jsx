@@ -3,16 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import { Plus, Edit3, Loader2, Calendar, Clock, Save, ChevronDown, ChevronLeft, ChevronRight, Circle, CheckCircle2 } from "lucide-react";
 
 // ── Form constants ─────────────────────────────────────────────────────────────
-// TODO: replace CATEGORIES with a real /categories API call when the endpoint is ready
-const CATEGORIES = [
-  { id: "11111111-1111-1111-1111-111111111111", name: "Dọn dẹp & Trang trí" },
-  { id: "22222222-2222-2222-2222-222222222222", name: "Ẩm thực" },
-  { id: "33333333-3333-3333-3333-333333333333", name: "Lễ nghi & Văn hóa" },
-  { id: "44444444-4444-4444-4444-444444444444", name: "Gia đình" },
-  { id: "55555555-5555-5555-5555-555555555555", name: "Mua sắm" },
-  { id: "66666666-6666-6666-6666-666666666666", name: "Phương tiện" },
-  { id: "77777777-7777-7777-7777-777777777777", name: "Khác" },
-];
 
 const PRIORITIES = [
   { value: "low",    label: "Low"    },
@@ -28,6 +18,7 @@ const EMPTY = {
   title:       "",
   description: "",
   category_id: "",
+  occasion_id: "",
   priority:    "medium",
   status:      "TODO",
   start_date:  "",
@@ -294,7 +285,7 @@ function TimePicker({ value, onChange }) {
 }
 
 // ── TaskForm (inlined + exported for direct use) ──────────────────────────────
-export function TaskForm({ initialValues = EMPTY, onSubmit, onCancel, mode = "create", isSubmitting = false }) {
+export function TaskForm({ initialValues = EMPTY, onSubmit, onCancel, mode = "create", isSubmitting = false, categories = [], occasions = [] }) {
   const [values,  setValues]  = useState({ ...EMPTY, ...initialValues });
   const [errors,  setErrors]  = useState({});
   const [touched, setTouched] = useState({});
@@ -357,7 +348,7 @@ export function TaskForm({ initialValues = EMPTY, onSubmit, onCancel, mode = "cr
               className={`${inputCls("category_id")} appearance-none pr-10 cursor-pointer`}
             >
               <option value="">Select category....</option>
-              {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
             <ChevronDown size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           </div>
@@ -378,6 +369,22 @@ export function TaskForm({ initialValues = EMPTY, onSubmit, onCancel, mode = "cr
               </button>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Occasion */}
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">Occasion</label>
+        <div className="relative">
+          <select
+            value={values.occasion_id}
+            onChange={(e) => set("occasion_id", e.target.value)}
+            className={`${inputCls("occasion_id")} appearance-none pr-10 cursor-pointer`}
+          >
+            <option value="">Select occasion (optional)...</option>
+            {occasions.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+          </select>
+          <ChevronDown size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
         </div>
       </div>
 
@@ -464,7 +471,7 @@ const HEADER = {
 };
 
 // ── TaskFormModal (exported) ───────────────────────────────────────────────────
-export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData = null, mode = "create" }) {
+export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData = null, mode = "create", categories = [], occasions = [] }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
@@ -506,21 +513,39 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData =
 
         {/* Body */}
         <div className="px-8 pt-8 pb-6 overflow-y-auto max-h-[75vh]">
-          {mode === "edit" && !initialData ? (
+          {mode === "edit" && (!initialData || initialData._isLoading) ? (
             <div className="flex items-center justify-center py-16 text-slate-400 gap-3">
               <Loader2 size={20} className="animate-spin" />
               <span className="text-sm font-['Plus_Jakarta_Sans']">Loading task…</span>
             </div>
-          ) : (
-            <TaskForm
-              key={initialData?.id ?? "create"}
-              mode={mode}
-              initialValues={initialData ?? undefined}
-              isSubmitting={isSubmitting}
-              onSubmit={handleSubmit}
-              onCancel={onClose}
-            />
-          )}
+          ) : (() => {
+            const mappedInitialData = initialData ? {
+              id: initialData.id,
+              title: initialData.title || "",
+              description: initialData.description || "",
+              category_id: initialData.categoryId || "",
+              occasion_id: initialData.occasionId || "",
+              priority: initialData.priority?.toLowerCase() || "medium",
+              status: initialData.status || "TODO",
+              start_date: initialData.startDate || "",
+              start_time: initialData.startTime ? initialData.startTime.slice(0, 5) : "",
+              due_date: initialData.dueDate || "",
+              due_time: initialData.dueTime ? initialData.dueTime.slice(0, 5) : "",
+            } : undefined;
+
+            return (
+              <TaskForm
+                key={mappedInitialData?.id ?? "create"}
+                mode={mode}
+                initialValues={mappedInitialData}
+                categories={categories}
+                occasions={occasions}
+                isSubmitting={isSubmitting}
+                onSubmit={handleSubmit}
+                onCancel={onClose}
+              />
+            );
+          })()}
         </div>
       </div>
     </div>

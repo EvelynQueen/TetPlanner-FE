@@ -27,6 +27,12 @@
   --color-danger: #ef4444;
   --color-info: #3b82f6;
 
+  /* ===== TOASTIFY THEME OVERRIDES ===== */
+  --toastify-color-success: var(--color-success);
+  --toastify-color-error: var(--color-danger);
+  --toastify-color-warning: var(--color-warning);
+  --toastify-color-info: var(--color-info);
+
   /* ===== BACKGROUND ===== */
   --color-bg-main: #f9fafb;
   --color-bg-card: #ffffff;
