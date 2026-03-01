@@ -1,17 +1,22 @@
-import { useState } from "react";
+// // simulate backend for testing success toast (uncomment below function and use in place of updateItem)
+// const fakeBackendUpdate = (id, data) =>
+//   new Promise((res) =>
+//     setTimeout(() => res({ success: true, data: { id } }), 500),
+//   );
+
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useShoppingItem } from "../../hooks/useShoppingItem";
 import FormCardLayout from "../../components/FormCardLayout";
 import SuccessToast from "../../components/SuccessToast";
 
-const CreateNewItem = ({
-  currentBudgetId = "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  currentOccasionId = "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-}) => {
+const UpdateShoppingItem = () => {
   const navigate = useNavigate();
-  const { createItem, undoItem, loading, setLoading } = useShoppingItem();
+  const { id } = useParams();
+  const { updateItem, getItemById, loading, setLoading } = useShoppingItem();
   const [error, setError] = useState("");
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -19,30 +24,53 @@ const CreateNewItem = ({
     price: 0,
     note: "",
     categoryId: 1,
-    budgetId: currentBudgetId,
-    occasionId: currentOccasionId,
+    isChecked: false,
   });
 
+  // Fetch item data on mount
+  useEffect(() => {
+    const fetchItem = async () => {
+      try {
+        const res = await getItemById(id);
+        if (res.success) {
+          setFormData({
+            name: res.data.name || "",
+            quantity: res.data.quantity || 1,
+            price: res.data.price || 0,
+            note: res.data.note || "",
+            categoryId: res.data.categoryId || 1,
+            isChecked: res.data.isChecked || false,
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching item:", err);
+        toast.error("Failed to load item details");
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    fetchItem();
+  }, [id, getItemById]);
+
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value, type, checked } = e.target;
     if (error && name === "name") setError("");
+
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "number" ? Number(value) : value,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : type === "number"
+            ? Number(value)
+            : value,
     }));
   };
 
-  /* --- simulate backend for testing SuccessToast ---
-  const fakeBackend = (data) =>
-    new Promise((resolve) =>
-      setTimeout(
-        () => resolve({ success: true, data: { id: "dummy-123" } }),
-        500,
-      ),
-    );*/
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!formData.name.trim()) {
       setError("Item name is required.");
       return;
@@ -50,20 +78,17 @@ const CreateNewItem = ({
 
     setLoading(true);
     try {
-      const res = await createItem(formData); //fakeBackend(formData);
+      const res = await updateItem(id, formData); //fakeBackendUpdate(id, formData);
       if (res.success) {
-        const newItemId = res.data.id;
         toast(
           ({ closeToast }) => (
             <SuccessToast
               closeToast={closeToast}
-              message="Item Created Successfully!"
-              description="Your item has been added to the list"
-              undoText="Undo"
-              viewText="Shopping List"
-              onUndo={async () => {
-                const undoRes = await undoItem(newItemId);
-                if (undoRes.success) toast.info("Item Removed Successfully!");
+              message="Item Updated Successfully!"
+              description="Your item has been updated."
+              onUndo={() => {
+                toast.info("Changes reverted!");
+                closeToast();
               }}
               onViewList={() => navigate("/shopping")}
             />
@@ -83,23 +108,30 @@ const CreateNewItem = ({
             },
           },
         );
-        setFormData({ ...formData, name: "", quantity: 1, price: 0, note: "" });
       }
     } catch (err) {
-      console.error("Error:", err);
-      toast.error(
-        err.response?.data?.message ||
-          "Something went wrong. Please try again!",
-      );
+      console.error("Error updating item:", err);
+      toast.error(err.response?.data?.message || "Failed to update item");
     } finally {
       setLoading(false);
     }
   };
 
+  if (initialLoading) {
+    return (
+      <FormCardLayout title="Loading..." onCancel={() => navigate(-1)}>
+        <div style={{ textAlign: "center", padding: "var(--space-5)" }}>
+          <p>Loading item details...</p>
+        </div>
+      </FormCardLayout>
+    );
+  }
+
   return (
     <FormCardLayout
-      title="Add New Item"
-      submitText="Save Item"
+      title="Update Item"
+      subtitle="Modify your shopping item details"
+      submitText="Save Changes"
       loading={loading}
       onSubmit={handleSubmit}
       onCancel={() => navigate(-1)}
@@ -111,6 +143,7 @@ const CreateNewItem = ({
           gap: "var(--space-4)",
         }}
       >
+        {/* Item Name */}
         <div>
           <label
             style={{
@@ -152,6 +185,7 @@ const CreateNewItem = ({
           )}
         </div>
 
+        {/* Category & Quantity */}
         <div style={{ display: "flex", gap: "var(--space-4)" }}>
           <div style={{ flex: 2 }}>
             <label
@@ -159,6 +193,7 @@ const CreateNewItem = ({
                 display: "block",
                 fontSize: "var(--fs-sm)",
                 fontWeight: "var(--fw-semibold)",
+                marginBottom: "var(--space-1)",
               }}
             >
               Category
@@ -187,6 +222,7 @@ const CreateNewItem = ({
                 display: "block",
                 fontSize: "var(--fs-sm)",
                 fontWeight: "var(--fw-semibold)",
+                marginBottom: "var(--space-1)",
               }}
             >
               Quantity
@@ -209,12 +245,14 @@ const CreateNewItem = ({
           </div>
         </div>
 
+        {/* Budget */}
         <div>
           <label
             style={{
               display: "block",
               fontSize: "var(--fs-sm)",
               fontWeight: "var(--fw-semibold)",
+              marginBottom: "var(--space-1)",
             }}
           >
             Budget (VND)
@@ -232,15 +270,18 @@ const CreateNewItem = ({
             }}
             value={formData.price}
             onChange={handleChange}
+            min="0"
           />
         </div>
 
+        {/* Note */}
         <div>
           <label
             style={{
               display: "block",
               fontSize: "var(--fs-sm)",
               fontWeight: "var(--fw-semibold)",
+              marginBottom: "var(--space-1)",
             }}
           >
             Note
@@ -256,15 +297,44 @@ const CreateNewItem = ({
               color: "var(--color-text-primary)",
               height: "80px",
               resize: "none",
+              fontFamily: "var(--font-family-base)",
             }}
             value={formData.note}
             onChange={handleChange}
             placeholder="Add note..."
           />
         </div>
+
+        {/* Status Checkbox */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "var(--space-2)",
+          }}
+        >
+          <input
+            type="checkbox"
+            name="isChecked"
+            id="isChecked"
+            checked={formData.isChecked}
+            onChange={handleChange}
+            style={{ cursor: "pointer" }}
+          />
+          <label
+            htmlFor="isChecked"
+            style={{
+              fontSize: "var(--fs-sm)",
+              cursor: "pointer",
+              margin: 0,
+            }}
+          >
+            Mark as completed
+          </label>
+        </div>
       </div>
     </FormCardLayout>
   );
 };
 
-export default CreateNewItem;
+export default UpdateShoppingItem;

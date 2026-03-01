@@ -1,4 +1,12 @@
-const SuccessToast = ({ closeToast, onUndo, onViewList }) => {
+const SuccessToast = ({
+  closeToast,
+  onUndo,
+  onViewList,
+  message = "Created Successfully!",
+  description = "Your item has been added to the list.",
+  undoText = "Undo",
+  viewText = "Shopping List",
+}) => {
   const overlayStyle = {
     position: "fixed",
     top: 0,
@@ -14,7 +22,7 @@ const SuccessToast = ({ closeToast, onUndo, onViewList }) => {
   };
 
   const cardStyle = {
-    backgroundColor: "#fff",
+    backgroundColor: "var(--color-bg-card)",
     padding: "32px 24px",
     borderRadius: "20px",
     boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
@@ -22,6 +30,8 @@ const SuccessToast = ({ closeToast, onUndo, onViewList }) => {
     width: "calc(100% - 40px)",
     maxWidth: "360px",
     animation: "popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+    fontFamily: "var(--font-family-base)",
+    color: "var(--color-text-primary)",
   };
 
   const iconCircleStyle = {
@@ -33,7 +43,7 @@ const SuccessToast = ({ closeToast, onUndo, onViewList }) => {
     alignItems: "center",
     justifyContent: "center",
     margin: "0 auto 20px auto",
-    color: "#10b981",
+    color: "var(--color-success)",
   };
 
   const btnGroupStyle = {
@@ -51,6 +61,7 @@ const SuccessToast = ({ closeToast, onUndo, onViewList }) => {
     border: "none",
     fontSize: "14px",
     transition: "opacity 0.2s",
+    fontFamily: "var(--font-family-base)",
   };
 
   return (
@@ -71,35 +82,47 @@ const SuccessToast = ({ closeToast, onUndo, onViewList }) => {
           </svg>
         </div>
 
-        <h3 style={{ margin: "0 0 8px 0", color: "#111827" }}>
-          Created Successfully!
+        <h3 style={{ margin: "0 0 8px 0", color: "var(--color-text-primary)" }}>
+          {message}
         </h3>
-        <p style={{ margin: "0 0 24px 0", color: "#6b7280", fontSize: "14px" }}>
-          Your item has been added to the list.
+        <p
+          style={{
+            margin: "0 0 24px 0",
+            color: "var(--color-text-secondary)",
+            fontSize: "14px",
+          }}
+        >
+          {description}
         </p>
 
         <div style={btnGroupStyle}>
           <button
-            style={{ ...btnBase, backgroundColor: "#f3f4f6", color: "#374151" }}
+            style={{
+              ...btnBase,
+              backgroundColor: "var(--color-bg-sidebar)",
+              color: "var(--color-text-secondary)",
+            }}
             onClick={() => {
               onUndo();
               closeToast();
             }}
           >
-            Undo
+            {undoText}
           </button>
 
           <button
             style={{
               ...btnBase,
-              backgroundColor: "var(--color-primary, #e63946)",
+              background: "var(--btn-primary-bg)",
+              color: "var(--btn-primary-text)",
+              boxShadow: "var(--btn-primary-shadow)",
             }}
             onClick={() => {
               onViewList();
               closeToast();
             }}
           >
-            View Shopping List
+            {viewText}
           </button>
         </div>
       </div>
