@@ -90,7 +90,7 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(() => {
     setToken(null);
-        setUser(null);
+    setUser(null);
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
   }, []);
