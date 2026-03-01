@@ -17,31 +17,23 @@ import { ToastContainer } from "react-toastify";
 function App() {
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/reset-success" element={<ResetPassSuccess />} />
-      </Routes>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        theme="colored"
-      />
+      <div className="w-full h-screen flex bg-(--color-bg-main)">
+        <SideBar />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/shopping" element={<Shopping />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/reset-success" element={<ResetPassSuccess />} />
+        </Routes>
+      </div>
     </>
-    <div className="w-full h-screen flex bg-(--color-bg-main)">
-      <SideBar />
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/tasks" element={<Tasks />} />
-        <Route path="/shopping" element={<Shopping />} />
-        <Route path="/calendar" element={<Calendar />} />
-      </Routes>
-    </div>
   );
 }
 export default App;
