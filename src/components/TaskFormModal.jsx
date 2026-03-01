@@ -1,26 +1,35 @@
 ﻿
 import { useState, useRef, useEffect } from "react";
 import { Plus, Edit3, Loader2, Calendar, Clock, Save, ChevronDown, ChevronLeft, ChevronRight, Circle, CheckCircle2 } from "lucide-react";
-import { TASK_CATEGORIES as CATEGORIES } from "../mocks/taskMock";
 
 // ── Form constants ─────────────────────────────────────────────────────────────
-// CATEGORIES imported from taskMock – swap for a real API call when backend is ready
+// TODO: replace CATEGORIES with a real /categories API call when the endpoint is ready
+const CATEGORIES = [
+  { id: "11111111-1111-1111-1111-111111111111", name: "Dọn dẹp & Trang trí" },
+  { id: "22222222-2222-2222-2222-222222222222", name: "Ẩm thực" },
+  { id: "33333333-3333-3333-3333-333333333333", name: "Lễ nghi & Văn hóa" },
+  { id: "44444444-4444-4444-4444-444444444444", name: "Gia đình" },
+  { id: "55555555-5555-5555-5555-555555555555", name: "Mua sắm" },
+  { id: "66666666-6666-6666-6666-666666666666", name: "Phương tiện" },
+  { id: "77777777-7777-7777-7777-777777777777", name: "Khác" },
+];
+
 const PRIORITIES = [
   { value: "low",    label: "Low"    },
   { value: "medium", label: "Medium" },
   { value: "high",   label: "High"   },
 ];
 const STATUSES = [
-  { value: "todo",        label: "To Do",       icon: Circle      },
-  { value: "in_progress", label: "In Progress", icon: Clock       },
-  { value: "done",        label: "Done",        icon: CheckCircle2 },
+  { value: "TODO",        label: "To Do",       icon: Circle      },
+  { value: "IN_PROGRESS", label: "In Progress", icon: Clock       },
+  { value: "DONE",        label: "Done",        icon: CheckCircle2 },
 ];
 const EMPTY = {
   title:       "",
   description: "",
   category_id: "",
   priority:    "medium",
-  status:      "todo",
+  status:      "TODO",
   start_date:  "",
   start_time:  "",
   due_date:    "",

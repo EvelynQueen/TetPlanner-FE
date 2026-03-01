@@ -11,7 +11,6 @@
  */
 import { Pencil, Trash2 } from "lucide-react";
 import StatusDropdown from "./StatusDropdown";
-import { getCategoryName, formatTaskSchedule, isOverdue } from "../utils/taskUtils";
 
 // ── Style maps (task-specific) ─────────────────────────────────────────────────
 const CATEGORY_STYLES = {
@@ -43,8 +42,8 @@ const PRIORITY_LABELS = {
 };
 
 // ── Badge sub-components ───────────────────────────────────────────────────────
-const CategoryBadge = ({ category_id }) => {
-  const name = getCategoryName(category_id);
+const CategoryBadge = ({ categoryName }) => {
+  const name = categoryName ?? "";
   return (
     <span className={`px-3 py-0.5 rounded-full text-xs font-medium ${CATEGORY_STYLES[name] ?? "bg-gray-100 text-gray-600"}`}>
       {name || "—"}
@@ -60,14 +59,11 @@ const PriorityBadge = ({ priority }) => (
 
 // ── Row ────────────────────────────────────────────────────────────────────────
 export default function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
-  const isDone    = task.status === "done";
-  const overdue   = isOverdue(task);
+  const isDone = task.status === "DONE";
 
   return (
     <tr className={`border-b transition-colors
-      ${ overdue
-        ? "bg-red-50/70 border-red-100 hover:bg-red-50"
-        : isDone
+      ${ isDone
           ? "bg-slate-50/40 border-slate-100 opacity-60 hover:opacity-80 hover:bg-slate-50"
           : "border-slate-100 hover:bg-slate-50/50"
       }`}>
@@ -76,9 +72,7 @@ export default function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
         <div className="flex items-center gap-3">
           <span className={`w-2 h-2 rounded-full shrink-0 ${PRIORITY_DOT[task.priority] ?? "bg-slate-300"}`} />
           <span className={`text-sm font-semibold ${
-            isDone   ? "text-slate-400 line-through" :
-            overdue  ? "text-red-600"                :
-                       "text-slate-800"
+            isDone ? "text-slate-400 line-through" : "text-slate-800"
           }`}>
             {task.title}
           </span>
@@ -87,19 +81,12 @@ export default function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
 
       {/* Category */}
       <td className="px-6 py-4">
-        <CategoryBadge category_id={task.category_id} />
+        <CategoryBadge categoryName={task.categoryName} />
       </td>
 
       {/* Schedule */}
-      <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
-        <span className={overdue ? "text-red-500" : "text-slate-500"}>
-          {formatTaskSchedule(task)}
-        </span>
-        {overdue && (
-          <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600 uppercase tracking-wide">
-            Overdue
-          </span>
-        )}
+      <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-slate-500">
+        {task.timelineLabel ?? "—"}
       </td>
 
       {/* Priority */}

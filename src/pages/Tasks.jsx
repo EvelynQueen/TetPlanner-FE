@@ -1,20 +1,18 @@
-﻿import { useState } from "react";
+﻿import { useContext, useState } from "react";
 import {
   Plus,
   Search,
   ChevronDown,
   SlidersHorizontal,
-  ChevronLeft,
-  ChevronRight,
   RotateCcw,
 } from "lucide-react";
-import useTask from "../hooks/useTask";
-import TaskHeader         from "../components/task/TaskHeader";
-import NotificationModal  from "../components/NotificationModal";
-import TaskFormModal      from "../components/TaskFormModal";
-import TaskTable          from "../components/TaskTable";
-import TaskRow            from "../components/TaskRow";
-import DeleteTaskModal    from "../components/DeleteTaskModal";
+import TaskContext           from "../contexts/TaskContext";
+import TaskHeader            from "../components/TaskHeader";
+import NotificationModal     from "../components/NotificationModal";
+import TaskFormModal         from "../components/TaskFormModal";
+import TaskTable             from "../components/TaskTable";
+import TaskRow               from "../components/TaskRow";
+import DeleteTaskModal       from "../components/DeleteTaskModal";
 
 // Table column definitions
 const TASK_COLUMNS = [
@@ -39,15 +37,11 @@ const Tasks = () => {
   const {
     tasks,
     loading,
-    page,
-    meta,
     handleCreate,
     handleUpdate,
     handleDelete,
-    handleRestore,
-    handleStatusUpdate,
-    handlePageChange,
-  } = useTask();
+    handleStatusChange,
+  } = useContext(TaskContext);
 
   const [search,       setSearch]       = useState("");
   // undefined = closed | null = create | Task object = edit
@@ -66,9 +60,11 @@ const Tasks = () => {
     if (modalTask?.id) {
       const prevTask = { ...modalTask };
       const updated  = await handleUpdate(modalTask.id, form);
+      setModalTask(undefined);
       setNotif({ type: "edit", task: updated, prevTask });
     } else {
       const created = await handleCreate(form);
+      setModalTask(undefined);
       setNotif({ type: "create", task: created });
     }
   };
@@ -162,17 +158,6 @@ const Tasks = () => {
             </>
           }
           onClose={() => setNotif(null)}
-          actions={[
-            {
-              label: "Undo",
-              icon: RotateCcw,
-              variant: "secondary",
-              onClick: async () => {
-                if (notif.task) await handleRestore(notif.task);
-                setNotif(null);
-              },
-            },
-          ]}
         />
       )}
 
@@ -216,53 +201,43 @@ const Tasks = () => {
             </div>
           </div>
 
-          {/* Task Table */}
-          <TaskTable
-            columns={TASK_COLUMNS}
-            data={filtered}
-            loading={loading}
-            emptyMessage={search ? `No tasks matching "${search}".` : "No tasks yet. Create your first one!"}
-            renderRow={(task) => (
-              <TaskRow
-                key={task.id}
-                task={task}
-                onEdit={(t) => setModalTask(t)}
-                onDelete={(t) => setDeleteTarget(t)}
-                onStatusChange={handleStatusUpdate}
-              />
-            )}
-            pagination={
-              <div className="flex items-center justify-between px-6 py-4">
-                <p className="text-sm text-slate-500">
-                  Showing{" "}
-                  <span className="font-bold text-slate-600">{filtered.length}</span> of{" "}
-                  <span className="font-bold text-slate-600">{meta.totalElements ?? 0}</span>{" "}
-                  task{meta.totalElements !== 1 ? "s" : ""}
-                </p>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page <= 1 || loading}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <ChevronLeft size={14} />
-                    Previous
-                  </button>
-                  <span className="px-3 py-1.5 text-sm text-slate-600 font-medium">
-                    {page} / {meta.totalPages ?? 1}
-                  </span>
-                  <button
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page >= (meta.totalPages ?? 1) || loading}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Next
-                    <ChevronRight size={14} />
-                  </button>
+          {/* ── List View ── */}
+          {view === "list" && (
+            <TaskTable
+              columns={TASK_COLUMNS}
+              data={filtered}
+              loading={loading}
+              emptyMessage={search ? `No tasks matching "${search}".` : "No tasks yet. Create your first one!"}
+              renderRow={(task) => (
+                <TaskRow
+                  key={task.id}
+                  task={task}
+                  onEdit={(t) => setModalTask(t)}
+                  onDelete={(t) => setDeleteTarget(t)}
+                  onStatusChange={handleStatusChange}
+                />
+              )}
+              pagination={
+                <div className="px-6 py-4">
+                  <p className="text-sm text-slate-500">
+                    Showing{" "}
+                    <span className="font-bold text-slate-600">{filtered.length}</span>{" "}
+                    task{filtered.length !== 1 ? "s" : ""}
+                  </p>
                 </div>
-              </div>
-            }
-          />
+              }
+            />
+          )}
+
+          {/* ── Kanban View ── */}
+          {view === "kanban" && (
+            <KanbanBoard
+              tasks={filtered}
+              onEdit={(t) => setModalTask(t)}
+              onDelete={(t) => setDeleteTarget(t)}
+              onAddTask={() => setModalTask(null)}
+            />
+          )}
         </div>
       </div>
     </>

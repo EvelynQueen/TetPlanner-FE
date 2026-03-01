@@ -3,30 +3,30 @@ import { Check } from "lucide-react";
 
 // ─── Style Maps ────────────────────────────────────────────────────────────────
 const BADGE_STYLES = {
-  todo:        "bg-slate-100 text-slate-500 border border-slate-200",
-  in_progress: "bg-blue-100 text-blue-700 border border-blue-200",
-  done:        "bg-green-100 text-green-700 border border-green-200",
+  TODO:        "bg-slate-100 text-slate-500 border border-slate-200",
+  IN_PROGRESS: "bg-blue-100 text-blue-700 border border-blue-200",
+  DONE:        "bg-green-100 text-green-700 border border-green-200",
 };
 
 const OPTION_ACTIVE = {
-  todo:        "bg-slate-100 text-slate-600",
-  in_progress: "bg-blue-50 text-blue-700",
-  done:        "bg-green-50 text-green-700",
+  TODO:        "bg-slate-100 text-slate-600",
+  IN_PROGRESS: "bg-blue-50 text-blue-700",
+  DONE:        "bg-green-50 text-green-700",
 };
 
 const DOT_COLOR = {
-  todo:        "bg-slate-400",
-  in_progress: "bg-blue-500",
-  done:        "bg-green-500",
+  TODO:        "bg-slate-400",
+  IN_PROGRESS: "bg-blue-500",
+  DONE:        "bg-green-500",
 };
 
 const STATUS_LABELS = {
-  todo:        "To Do",
-  in_progress: "In Progress",
-  done:        "Done",
+  TODO:        "To Do",
+  IN_PROGRESS: "In Progress",
+  DONE:        "Done",
 };
 
-const STATUSES = ["todo", "in_progress", "done"];
+const STATUSES = ["TODO", "IN_PROGRESS", "DONE"];
 
 /**
  * Inline status badge that opens a custom dropdown on click.

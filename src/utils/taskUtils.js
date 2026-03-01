@@ -2,7 +2,6 @@
  * taskUtils.js – reusable helpers for task data display.
  * All formatting lives here so pages/components stay thin.
  */
-import { TASK_CATEGORIES } from "../mocks/taskMock";
 
 // ── Predicates ─────────────────────────────────────────────────────────────────
 
@@ -17,7 +16,7 @@ export const isMultiDayTask = (task) =>
  * @returns {boolean}
  */
 export const isOverdue = (task) => {
-  if (!task.due_date || task.status === "done") return false;
+  if (!task.due_date || task.status === "DONE") return false;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return new Date(task.due_date + "T00:00:00") < today;
@@ -74,18 +73,4 @@ export const formatTaskSchedule = (task) => {
   if (start_time)             return `${dateStr} • ${start_time}`;
   if (due_time)               return `${dateStr} • ${due_time}`;
   return dateStr;
-};
-
-// ── Category lookup ────────────────────────────────────────────────────────────
-
-/**
- * Resolve a category_id to its display name.
- * Returns the id itself as fallback so nothing renders blank.
- * @param {string|null} category_id
- * @returns {string}
- */
-export const getCategoryName = (category_id) => {
-  if (!category_id) return "";
-  const cat = TASK_CATEGORIES.find((c) => c.id === category_id);
-  return cat?.name ?? category_id;
 };

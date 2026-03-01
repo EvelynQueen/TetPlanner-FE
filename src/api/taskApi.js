@@ -1,27 +1,51 @@
-import {
-  mockGetTasks,
-  mockGetTaskById,
-  mockCreateTask,
-  mockUpdateTask,
-  mockDeleteTask,
-} from "../mocks/taskMock";
+import { api } from "../config/api";
 
-/** GET /tasks?page=&size= */
-export const apiGetTasks = (page = 1, size = 10) =>
-  mockGetTasks(page, size);
+/**
+ * GET /api/tasks
+ * Returns: { message, data: Task[], success }
+ */
+export const getTasks = async () => {
+  const res = await api.get("/tasks");
+  return res.data.data;
+};
 
-/** GET /tasks/:id */
-export const apiGetTaskById = (id) =>
-  mockGetTaskById(id);
+/**
+ * GET /api/tasks/{id}
+ */
+export const getTaskById = async (id) => {
+  const res = await api.get(`/tasks/${id}`);
+  return res.data.data;
+};
 
-/** POST /tasks */
-export const apiCreateTask = (payload) =>
-  mockCreateTask(payload);
+/**
+ * POST /api/tasks
+ */
+export const createTask = async (payload) => {
+  const res = await api.post("/tasks", payload);
+  return res.data.data;
+};
 
-/** PUT /tasks/:id */
-export const apiUpdateTask = (id, payload) =>
-  mockUpdateTask(id, payload);
+/**
+ * PUT /api/tasks/{id}
+ */
+export const updateTask = async (id, payload) => {
+  const res = await api.put(`/tasks/${id}`, payload);
+  return res.data.data;
+};
 
-/** DELETE /tasks/:id */
-export const apiDeleteTask = (id) =>
-  mockDeleteTask(id);
+/**
+ * PATCH /api/tasks/{id}
+ * Update status only
+ */
+export const updateTaskStatus = async (id, status) => {
+  const res = await api.patch(`/tasks/${id}`, { status });
+  return res.data.data;
+};
+
+/**
+ * DELETE /api/tasks/{id}
+ */
+export const deleteTask = async (id) => {
+  const res = await api.delete(`/tasks/${id}`);
+  return res.data.success;
+};
