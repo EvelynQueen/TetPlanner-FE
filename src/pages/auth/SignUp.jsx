@@ -8,8 +8,7 @@ import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { BiLoaderAlt } from "react-icons/bi";
 import FlowerLogo from "../../components/FlowerLogo.jsx";
 
-const labelCls =
-  "text-[14px] font-medium text-[#e11d48]";
+const labelCls = "text-[14px] font-medium text-[#e11d48]";
 
 const inputCls =
   "w-full h-11 bg-white rounded-[5px] border border-[#e11d48] " +
@@ -23,7 +22,7 @@ function SignUp() {
   const navigate = useNavigate();
   const { signUp, error: authError, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm]   = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -41,7 +40,11 @@ function SignUp() {
     clearError();
     setIsSubmitting(true);
     try {
-      await signUp({ name: data.name, email: data.email, password: data.password });
+      await signUp({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
       navigate("/verify-email", { state: { email: data.email } });
     } catch {
       // authError đã set trong context → hiển thị bên dưới
@@ -52,20 +55,18 @@ function SignUp() {
 
   return (
     <div className="w-screen h-screen flex overflow-hidden bg-white">
-
       {/* ── Left cover ── */}
       <div
-        className="hidden lg:block flex-shrink-0 w-[40%] h-full bg-cover bg-center bg-no-repeat"
+        className="hidden lg:block shrink-0 w-[40%] h-full bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${CoverImage})` }}
       />
 
       {/* ── Right panel ── */}
       <div className="flex-1 flex items-center justify-center px-8 bg-white overflow-y-auto">
-        <div className="w-full max-w-[343px] py-10">
-
+        <div className="w-full max-w-85.75 py-10">
           {/* Logo + brand */}
           <div className="flex items-center justify-center gap-[6px] mb-2">
-            <div className="flex-shrink-0 mt-0.5">
+            <div className="shrink-0 mt-0.5">
               <FlowerLogo />
             </div>
             <p className="font-extrabold text-[22px] leading-none tracking-tight">
@@ -87,8 +88,10 @@ function SignUp() {
           )}
 
           {/* ── Form ── */}
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
             {/* Name */}
             <div className="flex flex-col gap-1">
               <label className={labelCls}>Name</label>
@@ -99,7 +102,9 @@ function SignUp() {
                 {...register("name", { required: "Name is required" })}
               />
               {errors.name && (
-                <p className="text-[11px] text-red-500">{errors.name.message}</p>
+                <p className="text-[11px] text-red-500">
+                  {errors.name.message}
+                </p>
               )}
             </div>
 
@@ -116,12 +121,17 @@ function SignUp() {
                   placeholder="happynewyear@gmail.com"
                   {...register("email", {
                     required: "Email is required",
-                    pattern: { value: /^\S+@\S+\.\S+$/, message: "Invalid email" },
+                    pattern: {
+                      value: /^\S+@\S+\.\S+$/,
+                      message: "Invalid email",
+                    },
                   })}
                 />
               </div>
               {errors.email && (
-                <p className="text-[11px] text-red-500">{errors.email.message}</p>
+                <p className="text-[11px] text-red-500">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -144,13 +154,17 @@ function SignUp() {
                   className="absolute inset-y-0 right-4 flex items-center text-[#111] hover:text-gray-600"
                   aria-label="Toggle password visibility"
                 >
-                  {showPassword
-                    ? <IoEyeOffOutline className="w-[18px] h-[18px]" />
-                    : <IoEyeOutline    className="w-[18px] h-[18px]" />}
+                  {showPassword ? (
+                    <IoEyeOffOutline className="w-[18px] h-[18px]" />
+                  ) : (
+                    <IoEyeOutline className="w-[18px] h-[18px]" />
+                  )}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-[11px] text-red-500">{errors.password.message}</p>
+                <p className="text-[11px] text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -173,24 +187,30 @@ function SignUp() {
                   className="absolute inset-y-0 right-4 flex items-center text-[#111] hover:text-gray-600"
                   aria-label="Toggle confirm password visibility"
                 >
-                  {showConfirm
-                    ? <IoEyeOffOutline className="w-[18px] h-[18px]" />
-                    : <IoEyeOutline    className="w-[18px] h-[18px]" />}
+                  {showConfirm ? (
+                    <IoEyeOffOutline className="w-4.5 h-4.5" />
+                  ) : (
+                    <IoEyeOutline className="w-4.5 h-4.5" />
+                  )}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-[11px] text-red-500">{errors.confirmPassword.message}</p>
+                <p className="text-[11px] text-red-500">
+                  {errors.confirmPassword.message}
+                </p>
               )}
             </div>
 
             {/* Submit */}
-            <div className="flex flex-col items-center gap-[18px] mt-4">
+            <div className="flex flex-col items-center gap-4.5 mt-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-12 flex items-center justify-center gap-2 rounded-[6px] bg-[#e11d48] hover:bg-[#be123c] disabled:opacity-60 transition-colors text-white text-[15px] font-medium tracking-wide"
+                className="w-full h-12 flex items-center justify-center gap-2 rounded-md bg-[#e11d48] hover:bg-[#be123c] disabled:opacity-60 transition-colors text-white text-[15px] font-medium tracking-wide"
               >
-                {isSubmitting && <BiLoaderAlt className="animate-spin text-xl" />}
+                {isSubmitting && (
+                  <BiLoaderAlt className="animate-spin text-xl" />
+                )}
                 {isSubmitting ? "Signing up..." : "SIGN UP"}
               </button>
 
@@ -205,7 +225,6 @@ function SignUp() {
                 </button>
               </p>
             </div>
-
           </form>
         </div>
       </div>

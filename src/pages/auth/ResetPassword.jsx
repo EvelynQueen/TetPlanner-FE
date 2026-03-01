@@ -1,9 +1,9 @@
 import { useState, useContext } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import cover from "../assets/cover.jpg";
+import cover from "../../assets/cover.jpg";
 import { toast } from "react-toastify";
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../../contexts/AuthContext";
 
 function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");

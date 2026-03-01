@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2 } from "lucide-react";
-import cover from "../assets/cover.jpg";
+import cover from "../../assets/cover.jpg";
 
 function ResetPassSuccess() {
   const navigate = useNavigate();
