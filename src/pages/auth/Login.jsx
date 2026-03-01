@@ -50,7 +50,11 @@ function LoginForm() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 h-full">
         <div className="w-full max-w-md">
           {/* LOGO*/}
-          <TetPlanner iconSize={"10xl"} textSize={"4xl"}></TetPlanner>
+          <TetPlanner
+            iconSize={"10xl"}
+            textSize={"4xl"}
+            textColor={"black"}
+          ></TetPlanner>
 
           <div className="text-center my-8">
             <h2 className="text-3xl font-bold text-[#E11D48] mb-2">

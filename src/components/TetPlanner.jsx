@@ -1,7 +1,7 @@
 import React from "react";
 import { IoMdFlower } from "react-icons/io";
 import { Link } from "react-router-dom";
-const TetPlanner = ({ iconSize, textSize }) => {
+const TetPlanner = ({ iconSize, textSize, textColor }) => {
   return (
     <Link
       to="/"
@@ -10,7 +10,7 @@ const TetPlanner = ({ iconSize, textSize }) => {
       <IoMdFlower
         className={`text-${iconSize || "4xl"} text-(--color-primary-500)`}
       />
-      <p>TetPlanner</p>
+      <p className={`text-${textColor} || ""`}>TetPlanner</p>
       <p className="text-(--color-primary-500)">Pro</p>
     </Link>
   );
