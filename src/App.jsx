@@ -16,15 +16,19 @@ import LoginForm from "./pages/auth/Login.jsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import ResetPassSuccess from "./pages/auth/ResetPassSuccess.jsx";
+import useTheme from "./hooks/useTheme.jsx";
+import FallingTheme from "./components/FallingTheme.jsx";
 
 function App() {
   const { token } = useContext(AuthContext);
+  const { flowerIcon } = useTheme("default");
 
   return (
     <div className="w-full h-screen flex bg-(--color-bg-main)">
       {token ? (
         <>
           <SideBar />
+          <FallingTheme flowerIcon={flowerIcon} />
           <div className="flex-1">
             <Routes>
               <Route path="/" element={<Dashboard />} />
