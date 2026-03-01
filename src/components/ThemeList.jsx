@@ -14,10 +14,10 @@ const ThemeList = () => {
   return (
     <div className="w-full flex flex-col justify-center items-start p-2 gap-1 bg-(--color-bg-main) rounded-md shadow-lg ">
       <p
-        className={`w-full text-left  cursor-pointer p-2 rounded-md transition-colors duration-200 ${
+        className={`w-full text-left cursor-pointer p-2 rounded-md transition-colors duration-200 ${
           theme === "default"
             ? "bg-(--color-primary-300)/25 text-(--color-primary-500)"
-            : "bg-transparent text-(--color-text-muted) hover:bg-black/5"
+            : "bg-transparent text-(--color-text-muted) hover:text-(--color-text-primary)"
         }`}
         onClick={() => handleThemeChange("default")}
       >
@@ -28,7 +28,7 @@ const ThemeList = () => {
         className={`w-full text-left  cursor-pointer p-2 rounded-md transition-colors duration-200 ${
           theme === "cherry-pink"
             ? "bg-(--color-primary-300)/25 text-(--color-primary-500)"
-            : "bg-transparent text-(--color-text-muted) hover:bg-black/5"
+            : "bg-transparent text-(--color-text-muted) hover:text-(--color-text-primary)"
         }`}
         onClick={() => handleThemeChange("cherry-pink")}
       >
@@ -39,7 +39,7 @@ const ThemeList = () => {
         className={`w-full text-left  cursor-pointer p-2 rounded-md transition-colors duration-200 ${
           theme === "apricot-yellow"
             ? "bg-(--color-primary-300)/25 text-(--color-primary-500)"
-            : "bg-transparent text-(--color-text-muted) hover:bg-black/5"
+            : "bg-transparent text-(--color-text-muted) hover:text-(--color-text-primary)"
         }`}
         onClick={() => handleThemeChange("apricot-yellow")}
       >
