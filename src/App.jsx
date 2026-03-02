@@ -24,7 +24,7 @@ function App() {
   const { flowerIcon } = useTheme("default");
 
   return (
-    <div className="w-full h-screen flex bg-(--color-bg-main)">
+    <div className="w-full h-screen flex bg-(--color-bg-app) text-(--color-text-primary) transition-colors duration-200">
       {token ? (
         <>
           <SideBar />
@@ -53,7 +53,7 @@ function App() {
 
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={2000}
         hideProgressBar={false}
         theme="colored"
       />
