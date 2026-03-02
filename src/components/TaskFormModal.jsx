@@ -120,34 +120,34 @@ function DatePicker({ value, onChange }) {
       >
         <Calendar
           size={16}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-muted) pointer-events-none"
         />
         <input
           readOnly
           value={displayValue}
           placeholder="Select date"
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-card)] text-base text-[var(--color-text-primary)] outline-none focus:border-[var(--color-primary-400)] focus:ring-2 focus:ring-[var(--color-primary-500)]/20 transition cursor-pointer"
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-(--color-border-light) bg-(--color-bg-card) text-base text-(--color-text-primary) outline-none focus:border-(--color-primary-400) focus:ring-2 focus:ring-(--color-primary-500)/20 transition cursor-pointer"
         />
       </div>
 
       {open && (
-        <div className="absolute top-full mt-2 left-0 z-50 bg-[var(--color-bg-card)] rounded-xl shadow-[var(--shadow-lg)] border border-[var(--color-border-light)] p-4 w-72">
+        <div className="absolute top-full mt-2 left-0 z-50 bg-(--color-bg-card) rounded-xl shadow-(--shadow-lg) border border-(--color-border-light) p-4 w-72">
           {/* Month nav */}
           <div className="flex items-center justify-between mb-3">
             <button
               type="button"
               onClick={() => setView(new Date(year, month - 1, 1))}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-bg-sidebar)] transition text-[var(--color-text-secondary)]"
+              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-(--color-bg-sidebar) transition text-(--color-text-secondary)"
             >
               <ChevronLeft size={16} />
             </button>
-            <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+            <span className="text-sm font-semibold text-(--color-text-primary)">
               {MONTHS[month]} {year}
             </span>
             <button
               type="button"
               onClick={() => setView(new Date(year, month + 1, 1))}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-bg-sidebar)] transition text-[var(--color-text-secondary)]"
+              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-(--color-bg-sidebar) transition text-(--color-text-secondary)"
             >
               <ChevronRight size={16} />
             </button>
@@ -158,7 +158,7 @@ function DatePicker({ value, onChange }) {
             {WEEK.map((d) => (
               <span
                 key={d}
-                className="text-center text-xs font-semibold text-[var(--color-text-muted)] py-1"
+                className="text-center text-xs font-semibold text-(--color-text-muted) py-1"
               >
                 {d}
               </span>
@@ -184,10 +184,10 @@ function DatePicker({ value, onChange }) {
                   className={`h-8 w-full flex items-center justify-center rounded-lg text-sm transition
                     ${
                       isSelected
-                        ? "bg-[var(--color-primary-500)] text-[var(--color-text-inverse)]"
+                        ? "bg-(--color-primary-500) text-(--color-text-inverse)"
                         : isToday
-                          ? "border border-[var(--color-primary-400)] text-[var(--color-primary-500)] hover:bg-[var(--color-primary-500)]/10"
-                          : "hover:bg-[var(--color-bg-sidebar)] text-[var(--color-text-primary)]"
+                          ? "border border-(--color-primary-400) text-(--color-primary-500) hover:bg-(--color-primary-500)/10"
+                          : "hover:bg-(--color-bg-sidebar) text-(--color-text-primary)"
                     }`}
                 >
                   {day}
@@ -197,11 +197,11 @@ function DatePicker({ value, onChange }) {
           </div>
 
           {/* Footer */}
-          <div className="flex gap-2 mt-3 pt-3 border-t border-[var(--color-border-light)]">
+          <div className="flex gap-2 mt-3 pt-3 border-t border-(--color-border-light)">
             <button
               type="button"
               onClick={selectToday}
-              className="flex-1 py-1.5 text-xs font-semibold text-[var(--color-primary-500)] hover:bg-[var(--color-primary-500)]/10 rounded-lg transition"
+              className="flex-1 py-1.5 text-xs font-semibold text-(--color-primary-500) hover:bg-(--color-primary-500)/10 rounded-lg transition"
             >
               Today
             </button>
@@ -211,7 +211,7 @@ function DatePicker({ value, onChange }) {
                 onChange("");
                 setOpen(false);
               }}
-              className="flex-1 py-1.5 text-xs font-semibold text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-sidebar)] rounded-lg transition"
+              className="flex-1 py-1.5 text-xs font-semibold text-(--color-text-secondary) hover:bg-(--color-bg-sidebar) rounded-lg transition"
             >
               Clear
             </button>
@@ -280,22 +280,22 @@ function TimePicker({ value, onChange }) {
       >
         <Clock
           size={16}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-muted) pointer-events-none"
         />
         <input
           readOnly
           value={displayValue}
           placeholder="Select time"
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-card)] text-base text-[var(--color-text-primary)] outline-none focus:border-[var(--color-primary-400)] focus:ring-2 focus:ring-[var(--color-primary-500)]/20 transition cursor-pointer"
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-(--color-border-light) bg-(--color-bg-card) text-base text-(--color-text-primary) outline-none focus:border-(--color-primary-400) focus:ring-2 focus:ring-(--color-primary-500)/20 transition cursor-pointer"
         />
       </div>
 
       {open && (
-        <div className="absolute top-full mt-2 left-0 z-50 bg-[var(--color-bg-card)] rounded-xl shadow-[var(--shadow-lg)] border border-[var(--color-border-light)] p-4 w-52">
+        <div className="absolute top-full mt-2 left-0 z-50 bg-(--color-bg-card) rounded-xl shadow-(--shadow-lg) border border-(--color-border-light) p-4 w-52">
           <div className="flex gap-3">
             {/* Hours */}
             <div className="flex flex-col items-center flex-1">
-              <span className="text-xs font-semibold text-[var(--color-text-muted)] mb-2">
+              <span className="text-xs font-semibold text-(--color-text-muted) mb-2">
                 Hour
               </span>
               <div
@@ -309,7 +309,7 @@ function TimePicker({ value, onChange }) {
                     data-selected={h === hv ? "" : undefined}
                     onClick={() => onChange(formatTime(hv, m, ampm))}
                     className={`w-full py-1 rounded-md text-sm text-center transition
-                      ${h === hv ? "bg-[var(--color-primary-500)] text-[var(--color-text-inverse)]" : "hover:bg-[var(--color-bg-sidebar)] text-[var(--color-text-primary)]"}`}
+                      ${h === hv ? "bg-(--color-primary-500) text-(--color-text-inverse)" : "hover:bg-(--color-bg-sidebar) text-(--color-text-primary)"}`}
                   >
                     {String(hv).padStart(2, "0")}
                   </button>
@@ -319,7 +319,7 @@ function TimePicker({ value, onChange }) {
 
             {/* Minutes */}
             <div className="flex flex-col items-center flex-1">
-              <span className="text-xs font-semibold text-[var(--color-text-muted)] mb-2">
+              <span className="text-xs font-semibold text-(--color-text-muted) mb-2">
                 Min
               </span>
               <div
@@ -333,7 +333,7 @@ function TimePicker({ value, onChange }) {
                     data-selected={m === mv ? "" : undefined}
                     onClick={() => onChange(formatTime(h, mv, ampm))}
                     className={`w-full py-1 rounded-md text-sm text-center transition
-                      ${m === mv ? "bg-[var(--color-primary-500)] text-[var(--color-text-inverse)]" : "hover:bg-[var(--color-bg-sidebar)] text-[var(--color-text-primary)]"}`}
+                      ${m === mv ? "bg-(--color-primary-500) text-(--color-text-inverse)" : "hover:bg-(--color-bg-sidebar) text-(--color-text-primary)"}`}
                   >
                     {String(mv).padStart(2, "0")}
                   </button>
@@ -349,7 +349,7 @@ function TimePicker({ value, onChange }) {
                   type="button"
                   onClick={() => onChange(formatTime(h, m, ap))}
                   className={`px-3 py-1.5 rounded-full text-xs font-bold transition
-                    ${ampm === ap ? "bg-[var(--color-primary-500)] text-[var(--color-text-inverse)]" : "bg-[var(--color-bg-sidebar)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border-light)]"}`}
+                    ${ampm === ap ? "bg-(--color-primary-500) text-(--color-text-inverse)" : "bg-(--color-bg-sidebar) text-(--color-text-secondary) hover:bg-(--color-border-light)"}`}
                 >
                   {ap}
                 </button>
@@ -405,8 +405,8 @@ export function TaskForm({
   const inputCls = (field) =>
     `w-full px-4 py-3 rounded-xl border text-base outline-none transition ` +
     (err(field)
-      ? "border-[var(--color-danger)] bg-[var(--color-danger)]/10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-danger)]/20"
-      : "border-[var(--color-border-light)] bg-[var(--color-bg-card)] text-[var(--color-text-primary)] focus:border-[var(--color-primary-400)] focus:ring-2 focus:ring-[var(--color-primary-500)]/20");
+      ? "border-(--color-danger) bg-(--color-danger)/10 text-(--color-text-primary) focus:ring-2 focus:ring-(--color-danger)/20"
+      : "border-(--color-border-light) bg-(--color-bg-card) text-(--color-text-primary) focus:border-(--color-primary-400) focus:ring-2 focus:ring-(--color-primary-500)/20");
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
@@ -470,7 +470,7 @@ export function TaskForm({
                 key={p}
                 type="button"
                 onClick={() => set("priority", p)}
-                className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${values.priority === p ? "bg-(--color-bg-card) text-(--color-text-primary) shadow-(--shadow-sm)" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"}`}
+                className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${values.priority === p ? "bg-(--color-bg-card) text-(--color-text-primary) shadow-(--shadow-sm)" : "text-(--color-text-secondary) hover:text-(--color-text-primary)"}`}
               >
                 {label}
               </button>
@@ -499,14 +499,14 @@ export function TaskForm({
           </select>
           <ChevronDown
             size={18}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-(--color-text-muted) pointer-events-none"
           />
         </div>
       </div>
 
       {/* Timeline — Start */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-[var(--color-text-primary)]">
+        <label className="text-sm font-semibold text-(--color-text-primary)">
           Start
         </label>
         <div className="flex gap-4">
@@ -523,11 +523,11 @@ export function TaskForm({
 
       {/* Timeline — Due */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-[var(--color-text-primary)]">
+        <label className="text-sm font-semibold text-(--color-text-primary)">
           Due
         </label>
         <div
-          className={`flex gap-4 ${dueDateError ? "rounded-xl ring-2 ring-[var(--color-danger)]/30" : ""}`}
+          className={`flex gap-4 ${dueDateError ? "rounded-xl ring-2 ring-(--color-danger)/30" : ""}`}
         >
           <DatePicker
             value={values.due_date}
@@ -539,7 +539,7 @@ export function TaskForm({
           />
         </div>
         {dueDateError && (
-          <p className="text-xs text-[var(--color-danger)] flex items-center gap-1">
+          <p className="text-xs text-(--color-danger) flex items-center gap-1">
             {dueDateError}
           </p>
         )}
@@ -547,7 +547,7 @@ export function TaskForm({
 
       {/* Status */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-[var(--color-text-primary)]">
+        <label className="text-sm font-semibold text-(--color-text-primary)">
           Status
         </label>
         <div className="flex gap-3">
@@ -556,7 +556,7 @@ export function TaskForm({
               key={value}
               type="button"
               onClick={() => set("status", value)}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-xs font-medium transition ${values.status === value ? "border-[var(--color-primary-500)] bg-[var(--color-primary-500)]/10 text-[var(--color-primary-500)]" : "border-[var(--color-border-light)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-medium)]"}`}
+              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-xs font-medium transition ${values.status === value ? "border-(--color-primary-500) bg-(--color-primary-500)/10 text-(--color-primary-500)" : "border-(--color-border-light) text-(--color-text-secondary) hover:border-(--color-border-medium)"}`}
             >
               {Icon && <Icon size={18} />}
               <span>{label}</span>
@@ -564,13 +564,13 @@ export function TaskForm({
           ))}
         </div>
         {err("status") && (
-          <p className="text-xs text-[var(--color-danger)]">{errors.status}</p>
+          <p className="text-xs text-(--color-danger)">{errors.status}</p>
         )}
       </div>
 
       {/* Description */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-[var(--color-text-primary)]">
+        <label className="text-sm font-semibold text-(--color-text-primary)">
           Description
         </label>
         <textarea
@@ -578,23 +578,23 @@ export function TaskForm({
           placeholder="Add task description..."
           value={values.description}
           onChange={(e) => set("description", e.target.value)}
-          className="w-full px-4 py-3 rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-card)] text-base text-[var(--color-text-primary)] outline-none focus:border-[var(--color-primary-400)] focus:ring-2 focus:ring-[var(--color-primary-500)]/20 transition resize-none"
+          className="w-full px-4 py-3 rounded-xl border border-(--color-border-light) bg-(--color-bg-card) text-base text-(--color-text-primary) outline-none focus:border-(--color-primary-400) focus:ring-2 focus:ring-(--color-primary-500)/20 transition resize-none"
         />
       </div>
 
       {/* Footer */}
-      <div className="flex gap-3 pt-2 border-t border-[var(--color-border-light)] -mx-8 px-8">
+      <div className="flex gap-3 pt-2 border-t border-(--color-border-light) -mx-8 px-8">
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-3 rounded-xl text-base font-semibold text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-sidebar)] transition"
+          className="px-6 py-3 rounded-xl text-base font-semibold text-(--color-text-secondary) hover:bg-(--color-bg-sidebar) transition"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={!isValid || isSubmitting}
-          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)] font-bold text-base shadow-[var(--btn-primary-shadow)] hover:opacity-[var(--btn-primary-hover-opacity)] disabled:opacity-50 disabled:cursor-not-allowed transition"
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-(--btn-primary-bg) text-(--btn-primary-text) font-bold text-base shadow-(--btn-primary-shadow) hover:opacity-(--btn-primary-hover-opacity) disabled:opacity-50 disabled:cursor-not-allowed transition"
         >
           <Save size={18} />
           {isSubmitting ? "Saving…" : "Save Task"}
@@ -641,22 +641,22 @@ export default function TaskFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 overflow-y-auto py-10">
-      <div className="w-[576px] bg-[var(--color-bg-card)] rounded-2xl border border-[var(--color-border-light)] shadow-[var(--shadow-lg)] overflow-hidden transition-colors duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm overflow-y-auto py-10">
+      <div className="w-xl bg-(--color-bg-card) rounded-2xl border border-(--color-border-light) shadow-(--shadow-lg) overflow-hidden transition-colors duration-200">
         {/* Header */}
-        <div className="flex items-start justify-between px-8 py-6 bg-[var(--gradient-primary)]">
+        <div className="flex items-start justify-between px-8 py-6 bg-(--gradient-primary)">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <Icon size={24} className="text-[var(--color-text-inverse)]" />
-              <h1 className="text-2xl font-bold text-[var(--color-text-inverse)]">
+              <Icon size={24} className="text-(--color-text-inverse)" />
+              <h1 className="text-2xl font-bold text-(--color-text-inverse)">
                 {title}
               </h1>
             </div>
-            <p className="text-sm text-[var(--color-text-inverse)]/80">{sub}</p>
+            <p className="text-sm text-(--color-text-inverse)/80">{sub}</p>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--color-text-inverse)]/20 text-[var(--color-text-inverse)] hover:bg-[var(--color-text-inverse)]/30 transition"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-(--color-text-inverse)/20 text-(--color-text-inverse) hover:bg-(--color-text-inverse)/30 transition"
           >
             ✕
           </button>
@@ -665,7 +665,7 @@ export default function TaskFormModal({
         {/* Body */}
         <div className="px-8 pt-8 pb-6 overflow-y-auto max-h-[75vh]">
           {mode === "edit" && (!initialData || initialData._isLoading) ? (
-            <div className="flex items-center justify-center py-16 text-[var(--color-text-muted)] gap-3">
+            <div className="flex items-center justify-center py-16 text-(--color-text-muted) gap-3">
               <Loader2 size={20} className="animate-spin" />
               <span className="text-sm">Loading task…</span>
             </div>
