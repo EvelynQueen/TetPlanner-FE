@@ -6,21 +6,21 @@ import {
   SlidersHorizontal,
   RotateCcw,
 } from "lucide-react";
-import TaskContext           from "../contexts/TaskContext";
-import TaskHeader            from "../components/TaskHeader";
-import TaskFormModal         from "../components/TaskFormModal";
-import TaskTable             from "../components/TaskTable";
-import TaskRow               from "../components/TaskRow";
-import DeleteTaskModal       from "../components/DeleteTaskModal";
+import TaskContext from "../contexts/TaskContext";
+import TaskHeader from "../components/TaskHeader";
+import TaskFormModal from "../components/TaskFormModal";
+import TaskTable from "../components/TaskTable";
+import TaskRow from "../components/TaskRow";
+import DeleteTaskModal from "../components/DeleteTaskModal";
 
 // Table column definitions
 const TASK_COLUMNS = [
-  { key: "title",    label: "Title" },
+  { key: "title", label: "Title" },
   { key: "category", label: "Category" },
   { key: "schedule", label: "Timeline" },
   { key: "priority", label: "Priority" },
-  { key: "status",   label: "Status" },
-  { key: "actions",  label: "Actions", align: "right" },
+  { key: "status", label: "Status" },
+  { key: "actions", label: "Actions", align: "right" },
 ];
 
 // Helper UI
@@ -45,15 +45,15 @@ const Tasks = () => {
     handleStatusChange,
   } = useContext(TaskContext);
 
-  const [search,       setSearch]       = useState("");
+  const [search, setSearch] = useState("");
   // undefined = closed | null = create | Task object = edit
-  const [modalTask,    setModalTask]    = useState(undefined);
+  const [modalTask, setModalTask] = useState(undefined);
   const [deleteTarget, setDeleteTarget] = useState(null);
   // "list" | "kanban"
-  const [view,         setView]         = useState("list");
+  const [view, setView] = useState("list");
 
   const filtered = tasks.filter((t) =>
-    t.title.toLowerCase().includes(search.toLowerCase())
+    t.title.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleEditClick = async (task) => {
@@ -62,7 +62,7 @@ const Tasks = () => {
     try {
       const fullTask = await fetchTaskById(task.id);
       setModalTask(fullTask);
-    } catch (e) {
+    } catch {
       setModalTask(undefined);
     }
   };
@@ -96,8 +96,6 @@ const Tasks = () => {
         onSubmit={handleFormSubmit}
       />
 
-
-
       {/* Delete confirmation modal */}
       <DeleteTaskModal
         isOpen={deleteTarget !== null}
@@ -119,7 +117,10 @@ const Tasks = () => {
           {/* Search + Filters */}
           <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-200">
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
               <input
                 type="text"
                 placeholder="Search tasks..."
@@ -144,7 +145,11 @@ const Tasks = () => {
               columns={TASK_COLUMNS}
               data={filtered}
               loading={loading}
-              emptyMessage={search ? `No tasks matching "${search}".` : "No tasks yet. Create your first one!"}
+              emptyMessage={
+                search
+                  ? `No tasks matching "${search}".`
+                  : "No tasks yet. Create your first one!"
+              }
               renderRow={(task) => (
                 <TaskRow
                   key={task.id}
@@ -158,7 +163,9 @@ const Tasks = () => {
                 <div className="px-6 py-4">
                   <p className="text-sm text-slate-500">
                     Showing{" "}
-                    <span className="font-bold text-slate-600">{filtered.length}</span>{" "}
+                    <span className="font-bold text-slate-600">
+                      {filtered.length}
+                    </span>{" "}
                     task{filtered.length !== 1 ? "s" : ""}
                   </p>
                 </div>

@@ -4,55 +4,61 @@
  * Can be passed as renderRow to <TaskTable />.
  *
  * Props:
- *   task           Task object
- *   onEdit         (task) => void
- *   onDelete       (task) => void
- *   onStatusChange (id, status) => void
+ * task           Task object
+ * onEdit         (task) => void
+ * onDelete       (task) => void
+ * onStatusChange (id, status) => void
  */
 import { Pencil, Trash2 } from "lucide-react";
 import StatusDropdown from "./StatusDropdown";
 
 // ── Style maps (task-specific) ─────────────────────────────────────────────────
+// Using opacity (/15) so these look good in both light and dark themes
 const CATEGORY_STYLES = {
-  "Dọn dẹp & Trang trí": "bg-pink-100 text-pink-700",
-  "Ẩm thực":             "bg-green-100 text-green-700",
-  "Lễ nghi & Văn hóa":  "bg-indigo-100 text-indigo-700",
-  "Mua sắm":             "bg-sky-100 text-sky-700",
-  "Gia đình":            "bg-purple-100 text-purple-700",
-  "Phương tiện":         "bg-orange-100 text-orange-700",
-  "Khác":                "bg-gray-100 text-gray-600",
+  "Dọn dẹp & Trang trí": "bg-pink-500/15 text-pink-600",
+  "Ẩm thực": "bg-green-500/15 text-green-600",
+  "Lễ nghi & Văn hóa": "bg-indigo-500/15 text-indigo-600",
+  "Mua sắm": "bg-sky-500/15 text-sky-600",
+  "Gia đình": "bg-purple-500/15 text-purple-600",
+  "Phương tiện": "bg-orange-500/15 text-orange-600",
+  Khác: "bg-gray-500/15 text-[var(--color-text-secondary)]",
 };
 
+// Tied to your status variables from index.css
 const PRIORITY_DOT = {
-  high:   "bg-red-500",
-  medium: "bg-amber-400",
-  low:    "bg-emerald-400",
+  high: "bg-[var(--color-danger)]",
+  medium: "bg-[var(--color-warning)]",
+  low: "bg-[var(--color-success)]",
 };
 
 const PRIORITY_STYLES = {
-  high:   "bg-red-100 text-red-600",
-  medium: "bg-amber-100 text-amber-600",
-  low:    "bg-emerald-100 text-emerald-600",
+  high: "bg-[var(--color-danger)]/15 text-[var(--color-danger)]",
+  medium: "bg-[var(--color-warning)]/15 text-[var(--color-warning)]",
+  low: "bg-[var(--color-success)]/15 text-[var(--color-success)]",
 };
 
 const PRIORITY_LABELS = {
-  high:   "High",
+  high: "High",
   medium: "Medium",
-  low:    "Low",
+  low: "Low",
 };
 
 // ── Badge sub-components ───────────────────────────────────────────────────────
 const CategoryBadge = ({ categoryName }) => {
   const name = categoryName ?? "";
   return (
-    <span className={`px-3 py-0.5 rounded-full text-xs font-medium ${CATEGORY_STYLES[name] ?? "bg-gray-100 text-gray-600"}`}>
+    <span
+      className={`px-3 py-0.5 rounded-full text-xs font-medium ${CATEGORY_STYLES[name] ?? "bg-(--color-bg-sidebar) text-(--color-text-secondary)"}`}
+    >
       {name || "—"}
     </span>
   );
 };
 
 const PriorityBadge = ({ priority }) => (
-  <span className={`px-2 py-1 rounded-full text-xs font-normal ${PRIORITY_STYLES[priority] ?? "bg-gray-100 text-gray-600"}`}>
+  <span
+    className={`px-2 py-1 rounded-full text-xs font-medium ${PRIORITY_STYLES[priority] ?? "bg-(--color-bg-sidebar) text-(--color-text-secondary)"}`}
+  >
     {PRIORITY_LABELS[priority] ?? priority}
   </span>
 );
@@ -62,18 +68,27 @@ export default function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
   const isDone = task.status === "DONE";
 
   return (
-    <tr className={`border-b transition-colors
-      ${ isDone
-          ? "bg-slate-50/40 border-slate-100 opacity-60 hover:opacity-80 hover:bg-slate-50"
-          : "border-slate-100 hover:bg-slate-50/50"
-      }`}>
+    <tr
+      className={`border-b transition-colors duration-200
+      ${
+        isDone
+          ? "bg-(--color-bg-main) border-(--color-border-light) opacity-60 hover:opacity-80"
+          : "border-(--color-border-light) hover:bg-(--color-bg-sidebar)"
+      }`}
+    >
       {/* Title */}
       <td className="pl-6 pr-6 py-4">
         <div className="flex items-center gap-3">
-          <span className={`w-2 h-2 rounded-full shrink-0 ${PRIORITY_DOT[task.priority] ?? "bg-slate-300"}`} />
-          <span className={`text-sm font-semibold ${
-            isDone ? "text-slate-400 line-through" : "text-slate-800"
-          }`}>
+          <span
+            className={`w-2 h-2 rounded-full shrink-0 ${PRIORITY_DOT[task.priority] ?? "bg-(--color-border-medium)"}`}
+          />
+          <span
+            className={`text-sm font-semibold transition-colors duration-200 ${
+              isDone
+                ? "text-(--color-text-muted) line-through"
+                : "text-(--color-text-primary)"
+            }`}
+          >
             {task.title}
           </span>
         </div>
@@ -85,7 +100,7 @@ export default function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
       </td>
 
       {/* Schedule */}
-      <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-slate-500">
+      <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-(--color-text-secondary) transition-colors duration-200">
         {task.timelineLabel ?? "—"}
       </td>
 
@@ -104,14 +119,14 @@ export default function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
         <div className="flex items-center justify-end gap-2">
           <button
             onClick={() => onEdit(task)}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-(--color-text-muted) hover:text-(--color-info) hover:bg-(--color-info)/10 transition-colors"
             title="Edit"
           >
             <Pencil size={16} />
           </button>
           <button
             onClick={() => onDelete(task)}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-(--color-text-muted) hover:text-(--color-danger) hover:bg-(--color-danger)/10 transition-colors"
             title="Delete"
           >
             <Trash2 size={16} />
