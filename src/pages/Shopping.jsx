@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Plus, Download, Settings, ChevronDown, Calendar } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -10,16 +10,19 @@ import ShoppingItemModal from "../components/shopping/ShoppingItemModal";
 import DeleteConfirmModal from "../components/shopping/DeleteConfirmModal";
 import CategoryModal from "../components/shopping/CategoryModal";
 import UpdateBudgetModal from "../components/shopping/UpdateBudgetModal";
+import CreateBudgetModal from "../components/shopping/CreateBudgetModal";
 import BudgetAlertModal from "../components/shopping/BudgetAlertModal";
 
 // APIs
 import { budgetAPI } from "../api/budgetAPI";
 import { shoppingItemAPI } from "../api/shoppingItemAPI";
+import { occasionAPI } from "../api/occasionAPI";
+import { categoryAPI } from "../api/categoryAPI";
 
 const Shopping = () => {
   // loading flags for asynchronous data
-  const [itemsLoading, setItemsLoading] = useState(true); // for shopping items
-  const [budgetsLoading, setBudgetsLoading] = useState(false); // for budget list
+  const [itemsLoading, setItemsLoading] = useState(true);
+  const [budgetsLoading, setBudgetsLoading] = useState(false);
   const [summary, setSummary] = useState({
     totalBudget: 0,
     spentToday: 0,
@@ -30,8 +33,9 @@ const Shopping = () => {
   const [budgets, setBudgets] = useState([]);
   const [selectedBudget, setSelectedBudget] = useState(null);
   const [showBudgetDropdown, setShowBudgetDropdown] = useState(false);
+  const [_categories, setCategories] = useState([]);
 
-  // placeholder for occasions list; could be fetched from API
+  // placeholder for occasions list
   const [occasions, setOccasions] = useState([]);
 
   // Items State (Pagination)
@@ -47,29 +51,50 @@ const Shopping = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [isCreateBudgetModalOpen, setIsCreateBudgetModalOpen] = useState(false);
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [alertType, setAlertType] = useState("warning");
   const [alertPercentage, setAlertPercentage] = useState(80);
   const [currentItem, setCurrentItem] = useState(null);
 
-  // Initial load
-  // React 18 StrictMode double-invokes effects in development, which causes
-  // budgetAPI.getBudgets() to be called twice and produces duplicate 500 errors
-  // if the server is misbehaving.  We guard with a ref so the request runs once.
-  const didInitialFetch = React.useRef(false);
-  useEffect(() => {
-    if (!didInitialFetch.current) {
-      fetchBudgets();
-      didInitialFetch.current = true;
-    }
+  // BUG FIX 1: The Initial Fetch Guard
+  const didInitialFetch = useRef(false);
 
-    // temp hardcoded occasions until API available
-    setOccasions([
-      { id: "1", name: "New Year" },
-      { id: "2", name: "Family Gathering" },
-      { id: "3", name: "Travel" },
-    ]);
+  // BUG FIX 2: Stop the alert modal from spamming during pagination
+  const alertedBudgets = useRef(new Set());
+
+  useEffect(() => {
+    // We now actually check the ref before fetching!
+    if (!didInitialFetch.current) {
+      didInitialFetch.current = true;
+      fetchBudgets();
+      fetchOccasions();
+      fetchCategories();
+    }
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await categoryAPI.getCategories();
+      if (res.success) {
+        setCategories(res.data);
+      }
+    } catch (err) {
+      console.error("Failed to load categories:", err);
+    }
+  };
+
+  const fetchOccasions = async () => {
+    try {
+      const res = await occasionAPI.getOccasions();
+      if (res.success) {
+        setOccasions(res.data);
+      }
+    } catch (err) {
+      console.error("Failed to load occasions:", err);
+      toast.error("Failed to load occasions");
+    }
+  };
 
   const fetchBudgets = async () => {
     setBudgetsLoading(true);
@@ -79,7 +104,6 @@ const Shopping = () => {
         const bList = res.data.budgets;
         setBudgets(bList);
 
-        // Map all budgets to spending data for the chart
         setSpendingData(
           bList.map((b) => ({
             name: b.name,
@@ -103,7 +127,6 @@ const Shopping = () => {
     if (!selectedBudget) return;
     setItemsLoading(true);
     try {
-      // 1. Fetch Summary for selected budget
       const summaryRes = await budgetAPI.getBudgetSummary(selectedBudget.id);
       if (summaryRes.success) {
         const s = summaryRes.data;
@@ -113,37 +136,35 @@ const Shopping = () => {
           remainingBudget: s.totalAmount - s.actualSpent,
         });
 
-        // Items from summary might not be paged, so let's fetch paged items instead if needed
-        const processedItems = s.shoppingItems.map((item) => ({
-          ...item,
-          isChecked:
-            item.isChecked !== undefined ? item.isChecked : item.checked, // Handle field name variation
-        }));
-        setItems(processedItems.slice(page * size, (page + 1) * size));
-        setTotalElements(processedItems.length);
-        setTotalPages(Math.ceil(processedItems.length / size));
-
-        // NOTE: Spending chart is now handled by fetchBudgets to show all budgets
-
-        // Check budget thresholds for alerts
+        // Check thresholds for alerts (only if we haven't alerted for this budget yet)
         const percent = (s.actualSpent / s.totalAmount) * 100;
-        if (percent >= 100) {
-          setAlertType("critical");
+        if (percent >= 80 && !alertedBudgets.current.has(selectedBudget.id)) {
+          setAlertType(percent >= 100 ? "critical" : "warning");
           setAlertPercentage(Math.round(percent));
           setIsAlertModalOpen(true);
-        } else if (percent >= 80) {
-          setAlertType("warning");
-          setAlertPercentage(Math.round(percent));
-          setIsAlertModalOpen(true);
+          // Mark as alerted so it doesn't pop up again when paginating
+          alertedBudgets.current.add(selectedBudget.id);
         }
       }
+
+      const itemsRes = await shoppingItemAPI.getItemsByBudget(
+        selectedBudget.id,
+        page,
+        size,
+      );
+      if (itemsRes.success) {
+        const pagedData = itemsRes.data;
+        setItems(pagedData.content || []);
+        setTotalElements(pagedData.totalElements || 0);
+        setTotalPages(pagedData.totalPages || 0);
+      }
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("Failed to load shopping items");
+      console.error("Error fetching data:", error);
+      toast.error("Failed to load shopping data");
     } finally {
       setItemsLoading(false);
     }
-  }, [selectedBudget, page, size]);
+  }, [page, size, selectedBudget]);
 
   useEffect(() => {
     fetchItems();
@@ -154,7 +175,7 @@ const Shopping = () => {
       const res = await shoppingItemAPI.updateItem(itemId, { isChecked });
       if (res.success) {
         fetchItems();
-        fetchBudgets(); // Refresh chart data
+        fetchBudgets();
       }
     } catch (err) {
       console.log(err);
@@ -178,35 +199,37 @@ const Shopping = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto min-h-screen bg-[#F8FAFC]">
+    <div className="p-8 max-w-7xl mx-auto min-h-screen bg-(--color-bg-main) transition-colors duration-200">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-extrabold text-[#1E293B] tracking-tight">
+          <h1 className="text-3xl font-extrabold text-(--color-text-primary) tracking-tight transition-colors duration-200">
             Budget & Shopping
           </h1>
-          <div className="flex items-center gap-2 mt-2 text-gray-500 font-medium">
-            <span className="text-rose-500">Year of the Horse 2026</span>
+          <div className="flex items-center gap-2 mt-2 text-(--color-text-secondary) font-medium transition-colors duration-200">
+            <span className="text-(--color-primary-500)">
+              Year of the Horse 2026
+            </span>
             <span>•</span>
-            <span className="flex items-center gap-1.5 bg-white px-2 py-0.5 rounded-lg border border-gray-100 shadow-sm">
+            <span className="flex items-center gap-1.5 bg-(--color-bg-card) px-2 py-0.5 rounded-lg border border-(--color-border-light) shadow-(--shadow-sm)">
               <Calendar size={14} /> BINH NGO
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 hover:shadow-md transition-all">
+          <button className="flex items-center gap-2 px-5 py-2.5 bg-(--color-bg-card) border border-(--color-border-light) rounded-xl text-sm font-bold text-(--color-text-primary) hover:bg-(--color-bg-sidebar) hover:shadow-(--shadow-sm) transition-all">
             <Download size={18} /> Export
           </button>
           <button
             onClick={() => setIsCategoryModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 hover:shadow-md transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 bg-(--color-bg-card) border border-(--color-border-light) rounded-xl text-sm font-bold text-(--color-text-primary) hover:bg-(--color-bg-sidebar) hover:shadow-(--shadow-sm) transition-all"
           >
             <Settings size={18} /> Manage Categories
           </button>
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-5 py-2.5 bg-rose-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-rose-200 hover:bg-rose-600 hover:-translate-y-0.5 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 bg-(--btn-primary-bg) text-(--btn-primary-text) rounded-xl text-sm font-bold shadow-(--btn-primary-shadow) hover:opacity-(--btn-primary-hover-opacity) hover:-translate-y-0.5 transition-all"
           >
             <Plus size={20} className="stroke-[3]" /> New Item
           </button>
@@ -217,13 +240,13 @@ const Shopping = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Section: Chart & Budget Selection */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-50 relative">
+          <div className="bg-(--color-bg-card) rounded-3xl p-8 shadow-(--shadow-sm) border border-(--color-border-light) relative transition-colors duration-200">
             <div className="flex justify-between items-start mb-10">
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
+                <h3 className="text-xl font-bold text-(--color-text-primary) mb-1 transition-colors duration-200">
                   Spending by Category
                 </h3>
-                <p className="text-sm text-gray-400 font-medium">
+                <p className="text-sm text-(--color-text-muted) font-medium transition-colors duration-200">
                   Allocation across major Tet preparation areas
                 </p>
               </div>
@@ -233,7 +256,7 @@ const Shopping = () => {
                 <button
                   onClick={() => setShowBudgetDropdown(!showBudgetDropdown)}
                   disabled={budgetsLoading}
-                  className="flex items-center gap-3 bg-gray-50/50 hover:bg-gray-100 px-4 py-2 rounded-xl border border-gray-100 text-sm font-bold text-gray-700 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-3 bg-(--color-bg-sidebar) hover:bg-(--color-border-light) px-4 py-2 rounded-xl border border-(--color-border-light) text-sm font-bold text-(--color-text-primary) transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {selectedBudget?.name || "Select Budget"}
                   <ChevronDown
@@ -242,7 +265,9 @@ const Shopping = () => {
                   />
                 </button>
                 {budgetsLoading && (
-                  <span className="ml-2 text-sm text-gray-500">Loading…</span>
+                  <span className="ml-2 text-sm text-(--color-text-muted)">
+                    Loading…
+                  </span>
                 )}
 
                 {showBudgetDropdown && (
@@ -251,7 +276,7 @@ const Shopping = () => {
                       className="fixed inset-0 z-10"
                       onClick={() => setShowBudgetDropdown(false)}
                     ></div>
-                    <div className="absolute right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 w-56 z-20 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute right-0 mt-2 bg-(--color-bg-card) rounded-2xl shadow-(--shadow-lg) border border-(--color-border-light) py-2 w-56 z-20 animate-in fade-in zoom-in-95 duration-200 transition-colors">
                       {budgets.map((b) => (
                         <button
                           key={b.id}
@@ -260,11 +285,22 @@ const Shopping = () => {
                             setPage(0);
                             setShowBudgetDropdown(false);
                           }}
-                          className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors hover:bg-rose-50 hover:text-rose-600 ${selectedBudget?.id === b.id ? "text-rose-600 bg-rose-50/50" : "text-gray-600"}`}
+                          className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors hover:bg-(--color-primary-500)/10 hover:text-(--color-primary-500) ${selectedBudget?.id === b.id ? "text-(--color-primary-500) bg-(--color-primary-500)/10" : "text-(--color-text-secondary)"}`}
                         >
                           {b.name}
                         </button>
                       ))}
+                      <div className="border-t border-(--color-border-light) mt-1 pt-1">
+                        <button
+                          onClick={() => {
+                            setIsCreateBudgetModalOpen(true);
+                            setShowBudgetDropdown(false);
+                          }}
+                          className="w-full text-left px-4 py-2.5 text-sm font-bold text-(--color-primary-500) hover:bg-(--color-bg-sidebar) transition-colors flex items-center gap-2"
+                        >
+                          <Plus size={16} /> New Budget
+                        </button>
+                      </div>
                     </div>
                   </>
                 )}
@@ -311,7 +347,7 @@ const Shopping = () => {
           fetchBudgets();
         }}
         budgetId={selectedBudget?.id}
-        occasionId={selectedBudget?.occasionId} // Assuming occasionId is on budget or passed
+        occasionId={selectedBudget?.occasionId}
         occasions={occasions}
       />
 
@@ -340,6 +376,15 @@ const Shopping = () => {
         budget={selectedBudget}
         onSuccess={() => {
           fetchItems();
+          fetchBudgets();
+        }}
+      />
+
+      <CreateBudgetModal
+        isOpen={isCreateBudgetModalOpen}
+        onClose={() => setIsCreateBudgetModalOpen(false)}
+        occasions={occasions}
+        onSuccess={() => {
           fetchBudgets();
         }}
       />
