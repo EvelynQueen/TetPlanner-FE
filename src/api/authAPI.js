@@ -49,7 +49,13 @@ export async function sendOTP(email) {
 // POST /api/auth/login
 export async function loginService({ email, password }) {
   try {
-    const response = await api.post("/auth/login", { email, password });
+    const response = await api.post("/auth/login", { email, password },
+      {
+        headers: {
+          "ngrok-skip-browser-warning": "69420"
+        }
+      }
+    );
     return response.data;
   } catch (error) {
     throw new Error(
@@ -82,6 +88,18 @@ export async function resetPasswordService({ token, newPassword }) {
     throw new Error(
       error.response?.data?.message ||
         "Failed to reset password. Please try again.",
+    );
+  }
+}
+// POST /api/auth/refresh-token
+export async function refreshTokenService() {
+  try {
+    const response = await api.post("/auth/refresh-token", {}, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message ||
+        "Failed to refresh token. Please login again.",
     );
   }
 }

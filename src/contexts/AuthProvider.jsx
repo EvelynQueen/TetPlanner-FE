@@ -25,6 +25,17 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const newToken = localStorage.getItem("accessToken");
+      if (newToken !== token) {
+        setToken(newToken);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [token]);
+
   const clearError = useCallback(() => setError(""), []);
 
   /** Simulate sign-up: stores user info then sends OTP */
