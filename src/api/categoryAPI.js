@@ -31,10 +31,3 @@ export const categoryAPI = {
     return response.data;
   },
 };
-
-// Named exports for convenience and compatibility with existing imports
-export const getCategories = categoryAPI.getCategories;
-export const createCategory = categoryAPI.createCategory;
-export const updateCategory = categoryAPI.updateCategory;
-export const getCategoryDetail = categoryAPI.getCategoryDetail;
-export const deleteCategory = categoryAPI.deleteCategory;
