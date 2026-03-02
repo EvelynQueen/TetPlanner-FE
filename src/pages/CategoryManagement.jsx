@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, Tag, Loader2, X, Save } from "lucide-react";
-import NotificationModal  from "../components/NotificationModal";
+import { toast } from "react-toastify";
+import NotificationModal from "../components/NotificationModal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import {
   getCategories,
@@ -9,24 +10,17 @@ import {
   deleteCategory,
 } from "../service/categoryService";
 
-// ── Colour palette ─────────────────────────────────────────────────────────────
-const PALETTE = [
-  "#f43f5e", "#e11d48", "#f97316", "#eab308",
-  "#22c55e", "#0ea5e9", "#6366f1", "#a855f7",
-  "#ec4899", "#14b8a6", "#94a3b8", "#78716c",
-];
+
 
 // ── Category form modal ────────────────────────────────────────────────────────
 function CategoryFormModal({ isOpen, initial, onClose, onSubmit, loading }) {
-  const [name,  setName]  = useState(initial?.name  ?? "");
-  const [color, setColor] = useState(initial?.color ?? "#f43f5e");
+  const [name, setName] = useState(initial?.name ?? "");
   const [error, setError] = useState("");
 
   // Reset when modal opens with new data
   useEffect(() => {
     if (isOpen) {
-      setName(initial?.name  ?? "");
-      setColor(initial?.color ?? "#f43f5e");
+      setName(initial?.name ?? "");
       setError("");
     }
   }, [isOpen, initial?.id]);
@@ -34,7 +28,7 @@ function CategoryFormModal({ isOpen, initial, onClose, onSubmit, loading }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name.trim()) { setError("Tên danh mục không được để trống."); return; }
-    onSubmit({ name: name.trim(), color });
+    onSubmit({ name: name.trim() });
   };
 
   if (!isOpen) return null;
@@ -75,43 +69,13 @@ function CategoryFormModal({ isOpen, initial, onClose, onSubmit, loading }) {
               value={name}
               onChange={(e) => { setName(e.target.value); setError(""); }}
               placeholder="e.g. Mua sắm"
-              className={`w-full px-4 py-3 rounded-xl border text-sm font-['Plus_Jakarta_Sans'] text-slate-700 placeholder:text-slate-400 outline-none transition focus:ring-2 focus:ring-rose-200 ${
-                error ? "border-rose-400 bg-rose-50" : "border-slate-200 bg-slate-50"
-              }`}
+              className={`w-full px-4 py-3 rounded-xl border text-sm font-['Plus_Jakarta_Sans'] text-slate-700 placeholder:text-slate-400 outline-none transition focus:ring-2 focus:ring-rose-200 ${error ? "border-rose-400 bg-rose-50" : "border-slate-200 bg-slate-50"
+                }`}
             />
             {error && <p className="text-xs text-rose-500 font-['Plus_Jakarta_Sans']">{error}</p>}
           </div>
 
-          {/* Colour picker */}
-          <div className="flex flex-col gap-3">
-            <label className="text-sm font-semibold text-slate-700 font-['Plus_Jakarta_Sans']">
-              Màu sắc
-            </label>
-            <div className="flex flex-wrap gap-3">
-              {PALETTE.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setColor(c)}
-                  style={{ backgroundColor: c }}
-                  className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${
-                    color === c ? "border-slate-700 scale-110" : "border-white"
-                  }`}
-                  title={c}
-                />
-              ))}
-            </div>
-            {/* Preview */}
-            <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span
-                className="w-4 h-4 rounded-full shrink-0"
-                style={{ backgroundColor: color }}
-              />
-              <span className="text-sm font-medium text-slate-700 font-['Plus_Jakarta_Sans']">
-                {name || "Tên danh mục"}
-              </span>
-            </div>
-          </div>
+
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">
@@ -140,13 +104,13 @@ function CategoryFormModal({ isOpen, initial, onClose, onSubmit, loading }) {
 // ── Page ───────────────────────────────────────────────────────────────────────
 export default function CategoryManagement() {
   const [categories, setCategories] = useState([]);
-  const [loading,    setLoading]    = useState(false);
-  const [saving,     setSaving]     = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   // undefined = closed | null = create | object = edit
-  const [modalData,  setModalData]  = useState(undefined);
+  const [modalData, setModalData] = useState(undefined);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [notif,      setNotif]      = useState(null);
+  const [notif, setNotif] = useState(null);
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
   const fetchAll = async () => {
@@ -175,6 +139,9 @@ export default function CategoryManagement() {
         setNotif({ type: "create", name: created.name });
       }
       setModalData(undefined);
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || "An error occurred";
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
@@ -189,6 +156,9 @@ export default function CategoryManagement() {
       await deleteCategory(target.id);
       setCategories((prev) => prev.filter((c) => c.id !== target.id));
       setNotif({ type: "delete", name: target.name });
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || "An error occurred";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -284,8 +254,7 @@ export default function CategoryManagement() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-100 bg-slate-50/60">
-                    <th className="pl-6 pr-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Màu</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Tên</th>
+                    <th className="pl-6 pr-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Tên</th>
                     <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide pr-6">Thao tác</th>
                   </tr>
                 </thead>
@@ -293,12 +262,6 @@ export default function CategoryManagement() {
                   {categories.map((cat) => (
                     <tr key={cat.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors">
                       <td className="pl-6 pr-4 py-4">
-                        <span
-                          className="w-6 h-6 rounded-full block shadow-sm"
-                          style={{ backgroundColor: cat.color }}
-                        />
-                      </td>
-                      <td className="px-4 py-4">
                         <span className="font-medium text-slate-700">{cat.name}</span>
                       </td>
                       <td className="px-4 py-4 text-right pr-6">

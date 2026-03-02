@@ -1,10 +1,12 @@
 /**
  * occasionService.js — service layer for occasion CRUD.
- * Delegates to mock; swap for real API calls when backend is ready.
+ * Now delegates to real API calls (backend is ready).
  */
 export {
-  mockGetOccasions    as getOccasions,
-  mockCreateOccasion  as createOccasion,
-  mockUpdateOccasion  as updateOccasion,
-  mockDeleteOccasion  as deleteOccasion,
-} from "../mock/occasionMock";
+  getOccasions,
+  getOccasionById,
+  createOccasion,
+  updateOccasion,
+  deleteOccasion,
+  getOccasionsByDateRange,
+} from "../api/occasionApi";

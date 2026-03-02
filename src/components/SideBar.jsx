@@ -27,10 +27,9 @@ const SettingDropdown = () => {
   }, [open]);
 
   const subItemCls = ({ isActive }) =>
-    `flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-150 caret-transparent ${
-      isActive
-        ? "text-(--color-primary-500) bg-(--color-primary-300)/25"
-        : "text-(--color-text-muted) hover:text-(--color-text-primary)"
+    `flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-150 caret-transparent ${isActive
+      ? "text-(--color-primary-500) bg-(--color-primary-300)/25"
+      : "text-(--color-text-muted) hover:text-(--color-text-primary)"
     }`;
 
   return (
@@ -38,11 +37,10 @@ const SettingDropdown = () => {
       {/* Trigger */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`w-full flex items-center justify-between gap-2 px-2 h-12 rounded-xl transition-all duration-200 caret-transparent ${
-          open
+        className={`w-full flex items-center justify-between gap-2 px-2 h-12 rounded-xl transition-all duration-200 caret-transparent ${open
             ? "text-(--color-primary-500) bg-(--color-primary-300)/25"
             : "text-(--color-text-muted) hover:text-(--color-text-primary)"
-        }`}
+          }`}
       >
         <div className="flex items-center gap-2">
           <RiSettings3Fill className="text-xl" />
@@ -57,7 +55,7 @@ const SettingDropdown = () => {
       {/* Sub-menu */}
       {open && (
         <div className="flex flex-col gap-0.5 mt-1 ml-4 pl-3 border-l-2 border-(--color-border-light)">
-          <NavLink to="/settings/category" className={subItemCls} onClick={() => setOpen(false)}>
+          <NavLink to="/settings/task-category" className={subItemCls} onClick={() => setOpen(false)}>
             <Tag size={15} />
             <span>Category</span>
           </NavLink>

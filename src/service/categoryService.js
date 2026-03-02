@@ -1,10 +1,11 @@
 /**
- * categoryService.js — service layer for category CRUD.
- * Delegates to mock; swap for real API calls when backend is ready.
+ * categoryService.js — service layer for task category CRUD.
+ * Now delegates to real API calls (backend is ready).
  */
 export {
-  mockGetCategories    as getCategories,
-  mockCreateCategory   as createCategory,
-  mockUpdateCategory   as updateCategory,
-  mockDeleteCategory   as deleteCategory,
-} from "../mock/categoryMock";
+  getTaskCategories as getCategories,
+  getTaskCategoryById as getCategoryById,
+  createTaskCategory as createCategory,
+  updateTaskCategory as updateCategory,
+  deleteTaskCategory as deleteCategory,
+} from "../api/taskCategoryApi";

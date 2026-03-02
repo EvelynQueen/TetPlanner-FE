@@ -4,7 +4,8 @@ import {
   Plus, Pencil, Trash2, CalendarDays, Loader2, X, Save, Moon,
   ChevronLeft, ChevronRight,
 } from "lucide-react";
-import NotificationModal  from "../components/NotificationModal";
+import { toast } from "react-toastify";
+import NotificationModal from "../components/NotificationModal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import { getLunarDateLabel, solarToLunar, getOccasionTitleFromLunar } from "../utils/lunarCalendar";
 import OccasionContext from "../contexts/OccasionContext";
@@ -69,7 +70,7 @@ function buildCalendarGrid(year, month) {
 // â”€â”€ Lunar-aware calendar picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function OccasionCalendar({ value, onChange, occupiedDates, defaultDates }) {
   const today = new Date();
-  const [viewYear,  setViewYear]  = useState(() => value ? Number(value.split("-")[0]) : today.getFullYear());
+  const [viewYear, setViewYear] = useState(() => value ? Number(value.split("-")[0]) : today.getFullYear());
   const [viewMonth, setViewMonth] = useState(() => value ? Number(value.split("-")[1]) : today.getMonth() + 1);
 
   const cells = buildCalendarGrid(viewYear, viewMonth);
@@ -123,18 +124,18 @@ function OccasionCalendar({ value, onChange, occupiedDates, defaultDates }) {
           if (!day) return <div key={`pad-${idx}`} />;
 
           const dateStr = `${viewYear}-${String(viewMonth).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-          const lunar   = solarToLunar(day, viewMonth, viewYear);
+          const lunar = solarToLunar(day, viewMonth, viewYear);
           const isSelected = dateStr === value;
-          const isDefault  = defaultDates.includes(dateStr);
+          const isDefault = defaultDates.includes(dateStr);
           const isOccupied = occupiedDates.includes(dateStr) && !isSelected;
-          const isToday    = dateStr === today.toISOString().slice(0, 10);
+          const isToday = dateStr === today.toISOString().slice(0, 10);
 
           let cellCls = "relative flex flex-col items-center justify-center rounded-lg cursor-pointer transition select-none h-10 ";
-          if (isSelected)       cellCls += "bg-rose-600 text-white ";
-          else if (isDefault)   cellCls += "bg-rose-100 text-rose-700 ";
-          else if (isOccupied)  cellCls += "bg-indigo-100 text-indigo-700 ";
-          else if (isToday)     cellCls += "ring-1 ring-rose-400 text-slate-800 hover:bg-slate-100 ";
-          else                  cellCls += "text-slate-700 hover:bg-slate-100 ";
+          if (isSelected) cellCls += "bg-rose-600 text-white ";
+          else if (isDefault) cellCls += "bg-rose-100 text-rose-700 ";
+          else if (isOccupied) cellCls += "bg-indigo-100 text-indigo-700 ";
+          else if (isToday) cellCls += "ring-1 ring-rose-400 text-slate-800 hover:bg-slate-100 ";
+          else cellCls += "text-slate-700 hover:bg-slate-100 ";
 
           return (
             <div key={dateStr} className={cellCls} onClick={() => onChange(dateStr)} title={dateStr}>
@@ -153,8 +154,8 @@ function OccasionCalendar({ value, onChange, occupiedDates, defaultDates }) {
 // â”€â”€ Form modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function OccasionFormModal({ isOpen, initial, onClose, onSubmit, loading, occupiedDates, defaultDates }) {
   const EMPTY = { customTitle: "", date: "", color: "#e11d48" };
-  const [form,      setForm]      = useState(EMPTY);
-  const [errors,    setErrors]    = useState({});
+  const [form, setForm] = useState(EMPTY);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (isOpen) {
@@ -177,7 +178,7 @@ function OccasionFormModal({ isOpen, initial, onClose, onSubmit, loading, occupi
 
   const validate = () => {
     const e = {};
-    if (!form.date)        e.date = "Please select a date.";
+    if (!form.date) e.date = "Please select a date.";
     // Duplicate check (exclude self when editing)
     const taken = occupiedDates.filter((d) => initial?.id
       ? d === form.date && d !== initial.date
@@ -299,9 +300,8 @@ function OccasionFormModal({ isOpen, initial, onClose, onSubmit, loading, occupi
                   type="button"
                   onClick={() => set("color", c)}
                   style={{ backgroundColor: c }}
-                  className={`w-7 h-7 rounded-full border-2 transition-transform hover:scale-110 ${
-                    form.color === c ? "border-slate-700 scale-110" : "border-white"
-                  }`}
+                  className={`w-7 h-7 rounded-full border-2 transition-transform hover:scale-110 ${form.color === c ? "border-slate-700 scale-110" : "border-white"
+                    }`}
                 />
               ))}
             </div>
@@ -341,15 +341,15 @@ export default function OccasionManagement() {
     handleDelete,
   } = useContext(OccasionContext);
 
-  const [saving,       setSaving]       = useState(false);
-  const [modalData,    setModalData]    = useState(undefined);   // undefined = closed
+  const [saving, setSaving] = useState(false);
+  const [modalData, setModalData] = useState(undefined);   // undefined = closed
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [notif,        setNotif]        = useState(null);
-  const [dateError,    setDateError]    = useState(false);
+  const [notif, setNotif] = useState(null);
+  const [dateError, setDateError] = useState(false);
 
   // All occupied dates (for calendar highlighting / validation)
   const occupiedDates = useMemo(() => occasions.map((o) => o.date), [occasions]);
-  const defaultDates  = useMemo(() => occasions.filter((o) => o.isDefault).map((o) => o.date), [occasions]);
+  const defaultDates = useMemo(() => occasions.filter((o) => o.isDefault).map((o) => o.date), [occasions]);
 
   // â”€â”€ Create / Update â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleSubmit = async (payload) => {
@@ -358,14 +358,19 @@ export default function OccasionManagement() {
     try {
       if (modalData?.id) {
         const updated = await handleUpdate(modalData.id, payload);
-        setNotif({ type: "edit",   title: resolveOccasionTitle(updated) });
+        setNotif({ type: "edit", title: resolveOccasionTitle(updated) });
       } else {
         const created = await handleCreate(payload);
         setNotif({ type: "create", title: resolveOccasionTitle(created) });
       }
       setModalData(undefined);
     } catch (err) {
-      if (err.message === "DATE_TAKEN") setDateError(true);
+      if (err.message === "DATE_TAKEN") {
+        setDateError(true);
+      } else {
+        const msg = err.response?.data?.message || err.message || "An error occurred";
+        toast.error(msg);
+      }
     } finally {
       setSaving(false);
     }
@@ -378,7 +383,10 @@ export default function OccasionManagement() {
     try {
       await handleDelete(target.id);
       setNotif({ type: "delete", title: resolveOccasionTitle(target) });
-    } catch (_) { /* ignore */ }
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || "An error occurred";
+      toast.error(msg);
+    }
   };
 
   return (
@@ -475,8 +483,8 @@ export default function OccasionManagement() {
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {occasions.map((occ) => {
                 const fullLunarLabel = getLunarDateLabel(occ.date);
-                const displayTitle   = resolveOccasionTitle(occ);
-                const lunarSubtitle  = stripParenthetical(fullLunarLabel);
+                const displayTitle = resolveOccasionTitle(occ);
+                const lunarSubtitle = stripParenthetical(fullLunarLabel);
                 return (
                   <div
                     key={occ.id}

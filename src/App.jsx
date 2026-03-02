@@ -40,7 +40,7 @@ function App() {
                     <Route path="/tasks" element={<Tasks />} />
                     <Route path="/shopping" element={<Shopping />} />
                     <Route path="/calendar" element={<Calendar />} />
-                    <Route path="/settings/category" element={<CategoryManagement />} />
+                    <Route path="/settings/task-category" element={<CategoryManagement />} />
                     <Route path="/settings/occasion" element={<OccasionManagement />} />
                   </Routes>
                 </OccasionProvider>
