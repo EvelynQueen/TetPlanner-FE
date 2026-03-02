@@ -231,7 +231,7 @@ const Shopping = () => {
             onClick={openCreateModal}
             className="flex items-center gap-2 px-5 py-2.5 bg-(--btn-primary-bg) text-(--btn-primary-text) rounded-xl text-sm font-bold shadow-(--btn-primary-shadow) hover:opacity-(--btn-primary-hover-opacity) hover:-translate-y-0.5 transition-all"
           >
-            <Plus size={20} className="stroke-[3]" /> New Item
+            <Plus size={20} className="stroke-3" /> New Item
           </button>
         </div>
       </div>

@@ -37,7 +37,7 @@ const ShoppingItemModal = ({
           setCategories(res.data);
           // Set default category if creating new
           if (!initialItem && res.data.length > 0) {
-            setFormData(prev => ({ ...prev, categoryId: res.data[0].id }));
+            setFormData((prev) => ({ ...prev, categoryId: res.data[0].id }));
           }
         }
       } catch (err) {
@@ -252,7 +252,7 @@ const ShoppingItemModal = ({
           <button
             type="submit"
             disabled={loading}
-            className="flex-[2] py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200 transition-all disabled:opacity-50"
+            className="flex-2 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200 transition-all disabled:opacity-50"
           >
             {loading ? "SAVING..." : isEdit ? "Save Changes" : "Save Item"}
           </button>

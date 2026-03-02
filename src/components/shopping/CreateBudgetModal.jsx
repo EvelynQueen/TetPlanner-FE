@@ -60,10 +60,12 @@ const CreateBudgetModal = ({ isOpen, onClose, onSuccess, occasions = [] }) => {
             </div>
             <div>
               <h2 className="text-2xl font-bold">New Budget Plan</h2>
-              <p className="text-white/80 text-sm">Start a new financial plan for Tet.</p>
+              <p className="text-white/80 text-sm">
+                Start a new financial plan for Tet.
+              </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:bg-white/10 rounded-full transition-colors"
           >
@@ -71,7 +73,10 @@ const CreateBudgetModal = ({ isOpen, onClose, onSuccess, occasions = [] }) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 bg-white rounded-b-2xl flex flex-col gap-6">
+        <form
+          onSubmit={handleSubmit}
+          className="p-8 bg-white rounded-b-2xl flex flex-col gap-6"
+        >
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">
               Budget Name
@@ -79,7 +84,9 @@ const CreateBudgetModal = ({ isOpen, onClose, onSuccess, occasions = [] }) => {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               placeholder="e.g. Traditional Food Budget"
               className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all text-gray-700 font-medium"
               required
@@ -92,7 +99,9 @@ const CreateBudgetModal = ({ isOpen, onClose, onSuccess, occasions = [] }) => {
             </label>
             <select
               value={formData.occasionId}
-              onChange={(e) => setFormData({ ...formData, occasionId: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, occasionId: e.target.value })
+              }
               className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all text-gray-700 font-medium appearance-none"
               required
             >
@@ -116,7 +125,9 @@ const CreateBudgetModal = ({ isOpen, onClose, onSuccess, occasions = [] }) => {
               <input
                 type="number"
                 value={formData.totalAmount}
-                onChange={(e) => setFormData({ ...formData, totalAmount: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, totalAmount: e.target.value })
+                }
                 placeholder="0"
                 className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all text-gray-700 font-medium"
                 required

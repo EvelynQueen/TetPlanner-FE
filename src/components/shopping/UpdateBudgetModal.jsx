@@ -53,10 +53,12 @@ const UpdateBudgetModal = ({ isOpen, onClose, budget, onSuccess }) => {
             </div>
             <div>
               <h2 className="text-2xl font-bold">Edit Total Budget</h2>
-              <p className="text-white/80 text-sm">Plan ahead for a prosperous New Year.</p>
+              <p className="text-white/80 text-sm">
+                Plan ahead for a prosperous New Year.
+              </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:bg-white/10 rounded-full transition-colors"
           >

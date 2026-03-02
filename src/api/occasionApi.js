@@ -31,3 +31,9 @@ export const occasionAPI = {
     return response.data;
   },
 };
+
+export const getOccasions = occasionAPI.getOccasions;
+export const createOccasion = occasionAPI.createOccasion;
+export const updateOccasion = occasionAPI.updateOccasion;
+export const getOccasionDetail = occasionAPI.getOccasionDetail;
+export const deleteOccasion = occasionAPI.deleteOccasion;

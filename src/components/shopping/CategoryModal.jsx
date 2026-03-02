@@ -17,6 +17,7 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
       const res = await categoryAPI.getCategories();
       if (res.success) setCategories(res.data);
     } catch (err) {
+      console.log(err);
       toast.error("Failed to load categories");
     } finally {
       setLoading(false);
@@ -38,6 +39,7 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
         onSuccess();
       }
     } catch (err) {
+      console.error(err);
       toast.error("Failed to add category");
     }
   };
@@ -53,6 +55,7 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
         onSuccess();
       }
     } catch (err) {
+      console.error(err);
       toast.error("Failed to update category");
     }
   };
@@ -70,6 +73,7 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
         onSuccess();
       }
     } catch (err) {
+      console.error(err);
       toast.error("Failed to delete category");
     }
   };
@@ -97,7 +101,7 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
           </button>
         </div>
 
-        <div className="max-h-[300px] overflow-y-auto pr-1">
+        <div className="max-h-75 overflow-y-auto pr-1">
           {loading ? (
             <div className="text-center py-4 text-gray-400">Loading...</div>
           ) : (
