@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "https://9b9ca163-67b9-4269-a89c-c1a4c0f14c29.mock.pstmn.io",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080/api",
   // withCredentials: true,
 });
 
