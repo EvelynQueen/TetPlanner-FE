@@ -13,6 +13,9 @@ import ResetPassword from "./pages/ResetPassword";
 import ResetPassSuccess from "./pages/ResetPassSuccess";
 import { ToastContainer } from "react-toastify";
 import TaskProvider from "./contexts/TaskProvider";
+import OccasionProvider from "./contexts/OccasionProvider";
+import CategoryManagement from "./pages/CategoryManagement.jsx";
+import OccasionManagement from "./pages/OccasionManagement.jsx";
 
 function App() {
   return (
@@ -31,12 +34,16 @@ function App() {
             <div className="w-full h-screen flex bg-(--color-bg-main)">
               <SideBar />
               <TaskProvider>
-                <Routes>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/tasks" element={<Tasks />} />
-                  <Route path="/shopping" element={<Shopping />} />
-                  <Route path="/calendar" element={<Calendar />} />
-                </Routes>
+                <OccasionProvider>
+                  <Routes>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/tasks" element={<Tasks />} />
+                    <Route path="/shopping" element={<Shopping />} />
+                    <Route path="/calendar" element={<Calendar />} />
+                    <Route path="/settings/category" element={<CategoryManagement />} />
+                    <Route path="/settings/occasion" element={<OccasionManagement />} />
+                  </Routes>
+                </OccasionProvider>
               </TaskProvider>
             </div>
           }
