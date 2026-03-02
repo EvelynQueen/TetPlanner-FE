@@ -1,37 +1,38 @@
-import axios from "axios";
+import { api } from "../config/api";
 
-const BASE_URL = "/api/shopping-items";
+const BASE_URL = "/shopping-items";
 
 export const shoppingItemAPI = {
-  // POST
-  createItem: async (itemData) => {
-    const response = await axios.post(`${BASE_URL}`, itemData);
-    return response.data;
-  },
-
-  // PUT
-  updateItem: async (itemId, updateData) => {
-    const response = await axios.put(`${BASE_URL}/${itemId}`, updateData);
-    return response.data;
-  },
-
-  // DELETE
-  deleteItem: async (itemId) => {
-    const response = await axios.delete(`${BASE_URL}/${itemId}`);
-    return response.data;
-  },
-
   // GET ALL ITEMS
   getAllItems: async (page = 0, size = 10) => {
-    const response = await axios.get(`${BASE_URL}`, {
+    const response = await api.get(BASE_URL, {
       params: { page, size },
     });
     return response.data;
   },
 
+  // POST
+  createItem: async (itemData) => {
+    const response = await api.post(BASE_URL, itemData);
+    return response.data;
+  },
+
+  // PUT
+  updateItem: async (itemId, updateData) => {
+    const response = await api.put(`${BASE_URL}/${itemId}`, updateData);
+    return response.data;
+  },
+
   // GET DETAIL
   getItemDetail: async (itemId) => {
-    const response = await axios.get(`${BASE_URL}/${itemId}`);
+    const response = await api.get(`${BASE_URL}/${itemId}`);
+    return response.data;
+  },
+
+  // DELETE
+  deleteItem: async (itemId) => {
+    const response = await api.delete(`${BASE_URL}/${itemId}`);
     return response.data;
   },
 };
+

@@ -16,10 +16,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ResetPassSuccess from "./pages/ResetPassSuccess";
 
-// Shopping Item Pages
-import CreateNewItem from "./pages/shopping-item/CreateNewItem";
-import UpdateShoppingItem from "./pages/shopping-item/UpdateShoppingItem";
-import DeleteShoppingItem from "./pages/shopping-item/DeleteShoppingItem";
+// Auth Pages
 
 import { ToastContainer } from "react-toastify";
 
@@ -46,9 +43,6 @@ const MainLayout = () => (
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/shopping" element={<Shopping />} />
         <Route path="/calendar" element={<Calendar />} />
-        <Route path="/shopping-item/create" element={<CreateNewItem />} />
-        <Route path="/shopping-item/update/:id" element={<UpdateShoppingItem />} />
-        <Route path="/shopping-item/delete/:id" element={<DeleteShoppingItem />} />
       </Routes>
     </div>
   </div>
