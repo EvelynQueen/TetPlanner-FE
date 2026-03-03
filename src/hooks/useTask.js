@@ -39,7 +39,7 @@ export const useTask = () => {
         getOccasions(),
       ]);
       setTasks(tasksData ?? []);
-      setCategories(categoriesData?.data ?? []);
+      setCategories(Array.isArray(categoriesData) ? categoriesData : (categoriesData?.data ?? []));
       setOccasions(occasionsData?.data ?? []);
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to fetch data");

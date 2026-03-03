@@ -8,7 +8,7 @@ import useTask from "../hooks/useTask";
 // ── Page ───────────────────────────────────────────────────────────────────────────────
 export default function CreateTask() {
   const navigate = useNavigate();
-  const { handleCreate, handleDelete } = useTask();
+  const { handleCreate, handleDelete, categories, occasions } = useTask();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdTask, setCreatedTask] = useState(null); // null = show form
@@ -102,6 +102,8 @@ export default function CreateTask() {
             isSubmitting={isSubmitting}
             onSubmit={handleSubmit}
             onCancel={() => navigate("/tasks")}
+            categories={categories}
+            occasions={occasions}
           />
         </div>
       </div>

@@ -109,7 +109,7 @@ export default function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
       </td>
 
       {/* Status */}
-      <td className="px-6 py-4">
+      <td className="px-6 py-4 z-10">
         <StatusDropdown task={task} onStatusChange={onStatusChange} />
       </td>
 
