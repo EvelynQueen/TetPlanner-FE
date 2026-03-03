@@ -9,7 +9,7 @@ import {
   getTaskById,
 } from "../api/taskApi";
 import { getCategories } from "../api/categoryApi";
-import { getOccasions } from "../api/occasionApi";
+import { getOccasions } from "../api/occasion_temp.js";
 import { useDeferredAction } from "./useDeferredAction.jsx";
 
 /**
