@@ -151,7 +151,6 @@ const Tasks = () => {
     setFilterStatus("ALL");
   };
 
-  // Kiểm tra xem có đang áp dụng filter nào không (để làm nổi bật nút Reset)
   const isFiltering =
     search !== "" ||
     filterCategory !== "ALL" ||
