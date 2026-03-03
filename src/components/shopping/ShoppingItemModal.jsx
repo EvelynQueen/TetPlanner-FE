@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useShoppingItem } from "../../hooks/useShoppingItem";
-import { categoryAPI } from "../../api/categoryAPI";
 import Modal from "../Modal";
+import { shoppingCategoryAPI } from "../../api/shoppingCategoryAPI";
 
 const ShoppingItemModal = ({
   isOpen,
@@ -32,7 +32,7 @@ const ShoppingItemModal = ({
   useEffect(() => {
     const fetchCats = async () => {
       try {
-        const res = await categoryAPI.getCategories();
+        const res = await shoppingCategoryAPI.getShoppingCategories();
         if (res.success) {
           setCategories(res.data);
           // Set default category if creating new

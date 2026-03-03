@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { categoryAPI } from "../../api/categoryAPI";
 import { Plus, Trash2, Edit2, Check, X } from "lucide-react";
 import Modal from "../Modal";
+import { shoppingCategoryAPI } from "../../api/shoppingCategoryAPI";
 
 const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
   const [categories, setCategories] = useState([]);
@@ -14,7 +14,7 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const res = await categoryAPI.getCategories();
+      const res = await shoppingCategoryAPI.getShoppingCategories();
       if (res.success) setCategories(res.data);
     } catch (err) {
       console.log(err);
@@ -31,7 +31,9 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
   const handleAdd = async () => {
     if (!newName.trim()) return;
     try {
-      const res = await categoryAPI.createCategory({ name: newName });
+      const res = await shoppingCategoryAPI.createShoppingCategory({
+        name: newName,
+      });
       if (res.success) {
         toast.success("Category added");
         setNewName("");
@@ -47,7 +49,9 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
   const handleUpdate = async (id) => {
     if (!editName.trim()) return;
     try {
-      const res = await categoryAPI.updateCategory(id, { name: editName });
+      const res = await shoppingCategoryAPI.updateShoppingCategory(id, {
+        name: editName,
+      });
       if (res.success) {
         toast.success("Category updated");
         setEditingId(null);
@@ -66,7 +70,7 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
     )
       return;
     try {
-      const res = await categoryAPI.deleteCategory(id);
+      const res = await shoppingCategoryAPI.deleteShoppingCategory(id);
       if (res.success) {
         toast.info("Category deleted");
         fetchCategories();

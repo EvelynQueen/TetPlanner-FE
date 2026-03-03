@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { MoreVertical, Edit2, Trash2 } from "lucide-react";
+import { MoreVertical, Edit2, Trash2, Tag } from "lucide-react"; // Thêm icon Tag
 
-// ── Style Maps for Categories ─────────────────────────────────────────
 const CATEGORY_STYLES = {
   Food: "bg-(--color-warning)/15 text-(--color-warning)",
   Gift: "bg-(--color-info)/15 text-(--color-info)",
@@ -19,6 +18,7 @@ const ShoppingTable = ({
   totalPages = 0,
   onPageChange,
   totalElements = 0,
+  budgetName,
 }) => {
   const [activeMenu, setActiveMenu] = useState(null);
 
@@ -28,15 +28,26 @@ const ShoppingTable = ({
 
   return (
     <div className="card p-0 bg-(--color-bg-card) border border-(--color-border-light) shadow-(--shadow-sm) rounded-xl mt-8 relative transition-colors duration-200">
-      <div className="px-6 py-4 border-b border-(--color-border-light) text-left transition-colors duration-200">
-        <h3 className="text-lg font-bold text-(--color-text-primary) transition-colors duration-200">
+      {/* HEADER BẢNG ĐƯỢC CẬP NHẬT */}
+      <div className="px-6 py-4 border-b border-(--color-border-light) flex items-center justify-between transition-colors duration-200">
+        <h3 className="text-lg font-bold text-(--color-text-primary)">
           Detailed Shopping List
         </h3>
+
+        {/* Hiển thị Tên Occasion nếu có */}
+        {budgetName && (
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-(--color-primary-500)/10 border border-(--color-primary-500)/20 rounded-lg">
+            <Tag size={14} className="text-(--color-primary-500)" />
+            <span className="text-xs font-bold text-(--color-primary-500) uppercase tracking-wide">
+              {budgetName}
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Removed strict overflow-hidden to prevent dropdown clipping */}
       <div className="w-full min-h-75">
         <table className="w-full text-left">
+          {/* ... (Toàn bộ phần thead và tbody của bạn giữ nguyên không đổi) ... */}
           <thead className="bg-(--color-bg-sidebar) text-(--color-text-secondary) uppercase text-xs font-semibold tracking-wider transition-colors duration-200">
             <tr>
               <th className="px-6 py-4">Item Name</th>
@@ -49,7 +60,6 @@ const ShoppingTable = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-(--color-border-light) transition-colors duration-200">
-            {/* FIXED BUG 1: Chained rendering logic */}
             {loading ? (
               <tr>
                 <td
@@ -77,16 +87,12 @@ const ShoppingTable = ({
                   </td>
                   <td className="px-6 py-4 text-left">
                     <span
-                      className={`px-2 py-1 rounded text-[10px] font-bold uppercase transition-colors duration-200 ${
-                        CATEGORY_STYLES[item.categoryName] ||
-                        CATEGORY_STYLES.General
-                      }`}
+                      className={`px-2 py-1 rounded text-[10px] font-bold uppercase transition-colors duration-200 ${CATEGORY_STYLES[item.categoryName] || CATEGORY_STYLES.General}`}
                     >
                       {item.categoryName || "General"}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-(--color-text-secondary) text-left transition-colors duration-200">
-                    {/* FIXED BUG 2: Fallback to 0 to prevent toLocaleString crashes */}
                     ${(item.price || 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 text-(--color-text-secondary) text-left transition-colors duration-200">
@@ -108,11 +114,7 @@ const ShoppingTable = ({
                       }`}
                     >
                       <div
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          item.isChecked
-                            ? "bg-(--color-success)"
-                            : "bg-(--color-warning)"
-                        }`}
+                        className={`w-1.5 h-1.5 rounded-full ${item.isChecked ? "bg-(--color-success)" : "bg-(--color-warning)"}`}
                       ></div>
                       {item.isChecked ? "Bought" : "Pending"}
                     </button>

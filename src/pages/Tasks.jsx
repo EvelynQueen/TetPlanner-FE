@@ -1,4 +1,5 @@
-﻿import { useContext, useState } from "react";
+﻿import { useState } from "react";
+import * as XLSX from "xlsx";
 import {
   Plus,
   Search,
@@ -6,13 +7,14 @@ import {
   SlidersHorizontal,
   RotateCcw,
 } from "lucide-react";
-import TaskContext from "../contexts/TaskContext";
-import TaskHeader from "../components/TaskHeader";
-import TaskFormModal from "../components/TaskFormModal";
-import TaskTable from "../components/TaskTable";
-import TaskRow from "../components/TaskRow";
-import DeleteTaskModal from "../components/DeleteTaskModal";
-
+import TaskHeader from "../components/task/TaskHeader";
+import TaskTable from "../components/task/TaskTable";
+import TaskRow from "../components/task/TaskRow";
+import TaskFormModal from "../components/task/TaskFormModal";
+import DeleteTaskModal from "../components/task/DeleteTaskModal";
+import useTask from "../hooks/useTask";
+import ManageTaskCategoryModal from "../components/task/ManageTaskCategoryModal";
+import { toast } from "react-toastify";
 // Table column definitions
 const TASK_COLUMNS = [
   { key: "title", label: "Title" },
@@ -43,7 +45,7 @@ const Tasks = () => {
     handleUpdate,
     handleDelete,
     handleStatusChange,
-  } = useContext(TaskContext);
+  } = useTask();
 
   const [search, setSearch] = useState("");
   // undefined = closed | null = create | Task object = edit
@@ -51,10 +53,54 @@ const Tasks = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   // "list" | "kanban"
   const [view, setView] = useState("list");
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
   const filtered = tasks.filter((t) =>
     t.title.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const handleExport = () => {
+    if (!filtered.length) {
+      toast.warning("No tasks to export.");
+      return;
+    }
+
+    const exportData = filtered.map((task, index) => {
+      const formatStatus = (status) => {
+        if (!status) return "TODO";
+        if (status === "IN_PROGRESS") return "In Progress";
+        if (status === "DONE") return "Done";
+        return "To Do";
+      };
+
+      const formatPriority = (priority) => {
+        if (priority === "high") return "High";
+        if (priority === "medium") return "Medium";
+        if (priority === "low") return "Low";
+        return "Medium";
+      };
+      console.log("Exporting task:", task);
+      return {
+        "No.": index + 1,
+        "Task Title": task.title || "Untitled Task",
+        Category: task.categoryName || "No Category",
+        Timeline: task.timelineLabel || "N/A",
+        Status: formatStatus(task.status),
+        Priority: formatPriority(task.priority),
+        "Start Date": task.start_date || "N/A",
+        "Due Date": task.due_date || "N/A",
+        Description: task.description || "",
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Tasks");
+
+    XLSX.writeFile(workbook, "Tet_Preparation_Tasks.xlsx");
+
+    toast.success("Exported tasks to Excel successfully!");
+  };
 
   const handleEditClick = async (task) => {
     // Set partial task to open modal in loading state
@@ -85,6 +131,10 @@ const Tasks = () => {
 
   return (
     <>
+      <ManageTaskCategoryModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+      />
       {/* Create / Edit form modal */}
       <TaskFormModal
         isOpen={modalTask !== undefined}
@@ -110,6 +160,8 @@ const Tasks = () => {
           currentView={view}
           onViewChange={setView}
           onCreateTask={() => setModalTask(null)}
+          onManageCategories={() => setIsCategoryModalOpen(true)}
+          onExport={handleExport}
         />
 
         {/* Body */}

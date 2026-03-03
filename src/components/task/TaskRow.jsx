@@ -10,8 +10,7 @@
  * onStatusChange (id, status) => void
  */
 import { Pencil, Trash2 } from "lucide-react";
-import StatusDropdown from "./StatusDropdown";
-
+import StatusDropdown from "../StatusDropdown";
 // ── Style maps (task-specific) ─────────────────────────────────────────────────
 // Using opacity (/15) so these look good in both light and dark themes
 const CATEGORY_STYLES = {

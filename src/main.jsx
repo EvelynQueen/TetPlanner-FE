@@ -7,18 +7,31 @@ import { AuthProvider } from "./contexts/AuthProvider.jsx";
 import { ThemeProvider } from "./contexts/ThemeProvider.jsx";
 import TaskProvider from "./contexts/TaskProvider.jsx";
 import { ShoppingItemProvider } from "./contexts/ShoppingItemProvider.jsx";
+import { ShoppingCategoryProvider } from "./contexts/ShoppingCategoryProvider.jsx";
+import { TaskCategoryProvider } from "./contexts/TaskCategoryProvider.jsx";
+import { BudgetProvider } from "./contexts/BudgetProvider.jsx";
+import { OccasionProvider } from "./contexts/OccasionProvider.jsx";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <ShoppingItemProvider>
-        <TaskProvider>
-          <ThemeProvider>
-            <AuthProvider>
-              <App />
-            </AuthProvider>
-          </ThemeProvider>
-        </TaskProvider>
-      </ShoppingItemProvider>
+      <OccasionProvider>
+        <BudgetProvider>
+          <ShoppingCategoryProvider>
+            <ShoppingItemProvider>
+              <TaskCategoryProvider>
+                <TaskProvider>
+                  <ThemeProvider>
+                    <AuthProvider>
+                      <App />
+                    </AuthProvider>
+                  </ThemeProvider>
+                </TaskProvider>
+              </TaskCategoryProvider>
+            </ShoppingItemProvider>
+          </ShoppingCategoryProvider>
+        </BudgetProvider>
+      </OccasionProvider>
     </BrowserRouter>
   </StrictMode>,
 );

@@ -7,6 +7,13 @@ export const occasionAPI = {
     return response.data;
   },
 
+  getOccasionsByRange: async (fromDate, toDate) => {
+    const response = await api.get("/occasions/range", {
+      params: { from: fromDate, to: toDate },
+    });
+    return response.data;
+  },
+
   // GET /api/occasions/{id}
   getOccasionDetail: async (id) => {
     const response = await api.get(`/occasions/${id}`);
@@ -32,8 +39,11 @@ export const occasionAPI = {
   },
 };
 
-export const getOccasions = occasionAPI.getOccasions;
-export const createOccasion = occasionAPI.createOccasion;
-export const updateOccasion = occasionAPI.updateOccasion;
-export const getOccasionDetail = occasionAPI.getOccasionDetail;
-export const deleteOccasion = occasionAPI.deleteOccasion;
+export const {
+  getOccasions,
+  getOccasionsByRange,
+  getOccasionDetail,
+  createOccasion,
+  updateOccasion,
+  deleteOccasion,
+} = occasionAPI;

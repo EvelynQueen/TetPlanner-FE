@@ -8,8 +8,10 @@ import { FaCalendarAlt } from "react-icons/fa";
 import ThemeButton from "./ThemeButton";
 import ProfileButton from "./ProfileButton";
 import TetPlanner from "./TetPlanner";
+import { useAuth } from "../hooks/useAuth";
 
 const SideBar = () => {
+  const { userName } = useAuth();
   return (
     <div className="w-64 shrink-0 h-full p-4 flex flex-col bg-(--color-bg-sidebar) border-r border-(--color-border-light) caret-transparent">
       {/* Top of sidebar */}
@@ -34,7 +36,7 @@ const SideBar = () => {
       {/* Bottom of sidebar */}
       <div className="mt-auto">
         <ThemeButton />
-        <ProfileButton name="John Doe" />
+        <ProfileButton name={userName} />
       </div>
     </div>
   );
