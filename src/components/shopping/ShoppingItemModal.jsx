@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useShoppingItem } from "../../hooks/useShoppingItem";
+import { useDeferredAction } from "../../hooks/useDeferredAction.jsx";
 import Modal from "../Modal";
 import { shoppingCategoryAPI } from "../../api/shoppingCategoryAPI";
 
@@ -14,6 +15,7 @@ const ShoppingItemModal = ({
   occasions = [],
 }) => {
   const { createItem, updateItem, loading, setLoading } = useShoppingItem();
+  const { scheduleAction } = useDeferredAction();
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState("");
   const isEdit = !!initialItem;
@@ -66,9 +68,10 @@ const ShoppingItemModal = ({
           quantity: 1,
           price: 0,
           note: "",
-          categoryId: 1,
+          categoryId: "",
           isChecked: false,
           budgetId: budgetId,
+          dueTime: "",
           occasionId: occasionId,
         });
       }
@@ -97,25 +100,48 @@ const ShoppingItemModal = ({
       return;
     }
 
-    setLoading(true);
-    try {
-      let res;
-      if (isEdit) {
-        res = await updateItem(initialItem.id, formData);
-      } else {
-        res = await createItem(formData);
-      }
+    if (isEdit) {
+      // For UPDATE: use deferred pattern with undo
+      onClose(); // Close modal immediately
 
-      if (res.success) {
-        toast.success(`Item ${isEdit ? "updated" : "created"} successfully!`);
-        onSuccess();
-        onClose();
+      scheduleAction({
+        actionKey: `update-shopping-item-${initialItem.id}`,
+        toastMessage: `"${formData.name}" updated – Undo?`,
+        onOptimistic: () => {
+          // Trigger parent refresh to show optimistic update
+          onSuccess();
+        },
+        actionFn: async () => {
+          await updateItem(initialItem.id, formData);
+          onSuccess(); // Re-fetch updated data from server
+        },
+        onUndo: () => {
+          onSuccess(); // Re-fetch original data from server
+          toast.info("Update undone.");
+        },
+        onError: (err) => {
+          onSuccess(); // Re-fetch original data
+          toast.error(
+            err.response?.data?.message || "Update failed. Changes reverted.",
+          );
+        },
+      });
+    } else {
+      // For CREATE: no deferred, send immediately
+      setLoading(true);
+      try {
+        const res = await createItem(formData);
+        if (res.success) {
+          toast.success("Item created successfully!");
+          onSuccess();
+          onClose();
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        toast.error(err.response?.data?.message || "Something went wrong.");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error:", err);
-      toast.error(err.response?.data?.message || "Something went wrong.");
-    } finally {
-      setLoading(false);
     }
   };
 

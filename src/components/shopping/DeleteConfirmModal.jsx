@@ -1,27 +1,42 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { useShoppingItem } from "../../hooks/useShoppingItem";
+import { useDeferredAction } from "../../hooks/useDeferredAction.jsx";
 import { AlertTriangle } from "lucide-react";
 import Modal from "../Modal";
 
 const DeleteConfirmModal = ({ isOpen, onClose, item, onSuccess }) => {
-  const { deleteItem, loading, setLoading } = useShoppingItem();
+  const { deleteItem, loading } = useShoppingItem();
+  const { scheduleAction } = useDeferredAction();
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!item) return;
-    setLoading(true);
-    try {
-      const res = await deleteItem(item.id);
-      if (res.success) {
-        toast.info("Item deleted successfully");
+
+    // Close modal immediately so user sees the undo toast
+    onClose();
+
+    scheduleAction({
+      actionKey: `delete-shopping-item-${item.id}`,
+      toastMessage: `"${item.name}" deleted – Undo?`,
+      onOptimistic: () => {
+        // Let the parent know to refresh (remove item from list optimistically)
         onSuccess();
-        onClose();
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete item");
-    } finally {
-      setLoading(false);
-    }
+      },
+      actionFn: async () => {
+        await deleteItem(item.id);
+        // After actual deletion, refresh data from server
+        onSuccess();
+      },
+      onUndo: () => {
+        // Item was not actually deleted on backend, just re-fetch to restore
+        onSuccess();
+        toast.info("Delete undone.");
+      },
+      onError: (err) => {
+        onSuccess(); // re-fetch to restore
+        toast.error(err.response?.data?.message || "Failed to delete item");
+      },
+    });
   };
 
   return (

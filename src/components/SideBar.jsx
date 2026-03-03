@@ -1,5 +1,5 @@
 import React from "react";
-import TetPlaner from "./TetPlanner";
+import TetPlanner from "./TetPlanner";
 import SideBarButton from "./SideBarButton";
 import { RiDashboardFill } from "react-icons/ri";
 import { RiTaskFill } from "react-icons/ri";
@@ -7,7 +7,6 @@ import { RiWallet3Fill } from "react-icons/ri";
 import { FaCalendarAlt } from "react-icons/fa";
 import ThemeButton from "./ThemeButton";
 import ProfileButton from "./ProfileButton";
-import TetPlanner from "./TetPlanner";
 import { useAuth } from "../hooks/useAuth";
 
 const SideBar = () => {
@@ -19,7 +18,11 @@ const SideBar = () => {
         <TetPlanner />
 
         <nav className="flex flex-col gap-2 mt-4">
-          <SideBarButton icon={RiDashboardFill} content="Dashboard" to="/" />
+          <SideBarButton
+            icon={RiDashboardFill}
+            content="Dashboard"
+            to="/dashboard"
+          />
           <SideBarButton icon={RiTaskFill} content="Task" to="/tasks" />
           <SideBarButton
             icon={RiWallet3Fill}

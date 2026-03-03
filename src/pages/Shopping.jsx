@@ -6,6 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import { Plus, Download, Settings, ChevronDown, Calendar } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 // Components
@@ -22,8 +23,9 @@ import BudgetAlertModal from "../components/shopping/BudgetAlertModal";
 // APIs
 import { budgetAPI } from "../api/budgetAPI";
 import { shoppingItemAPI } from "../api/shoppingItemAPI";
-import { occasionAPI } from "../api/occasion_temp";
+import { occasionAPI } from "../api/occasion_temp"; // SỬA LẠI TÊN IMPORT CHUẨN
 import { shoppingCategoryAPI } from "../api/shoppingCategoryAPI";
+import { useDeferredAction } from "../hooks/useDeferredAction";
 
 const Shopping = () => {
   // --- Loading Flags ---
@@ -67,15 +69,12 @@ const Shopping = () => {
   const didInitialFetch = useRef(false);
   const alertedBudgets = useRef(new Set());
 
-  // Lấy tên Budget hiện tại
-  const currentBudgetName = useMemo(() => {
-    if (items && items.length > 0 && items[0].budgetName) {
-      return items[0].budgetName;
-    }
+  // Deferred action hook for undo support
+  const { scheduleAction } = useDeferredAction();
+  const [searchParams] = useSearchParams();
+  const queryBudgetId = searchParams.get("budgetId");
 
-    return selectedBudget ? selectedBudget.name : null;
-  }, [items, selectedBudget]);
-  // --- API Fetchers ---
+  // ── ĐẶT CÁC HÀM GỌI API LÊN TRƯỚC USEEFFECT ──────────────────────────────
   const fetchCategories = async () => {
     try {
       const res = await shoppingCategoryAPI.getShoppingCategories();
@@ -99,7 +98,6 @@ const Shopping = () => {
     try {
       const res = await budgetAPI.getBudgets(0, 100);
 
-      // An toàn trích xuất data (Chống Crash)
       if (res?.success && res?.data?.budgets) {
         const bList = res.data.budgets;
         setBudgets(bList);
@@ -112,7 +110,10 @@ const Shopping = () => {
         );
 
         if (bList.length > 0 && !selectedBudget) {
-          setSelectedBudget(bList[0]);
+          const fromQuery = queryBudgetId
+            ? bList.find((b) => String(b.id) === String(queryBudgetId))
+            : null;
+          setSelectedBudget(fromQuery || bList[0]);
         }
       }
     } catch (err) {
@@ -133,7 +134,6 @@ const Shopping = () => {
 
     setItemsLoading(true);
     try {
-      // 1. Lấy Summary an toàn
       const summaryRes = await budgetAPI.getBudgetSummary(selectedBudget.id);
       if (summaryRes?.success && summaryRes?.data) {
         const s = summaryRes.data;
@@ -143,7 +143,6 @@ const Shopping = () => {
           remainingBudget: (s.totalAmount || 0) - (s.actualSpent || 0),
         });
 
-        // Xử lý Alert logic
         if (s.totalAmount > 0) {
           const percent = (s.actualSpent / s.totalAmount) * 100;
           if (percent >= 80 && !alertedBudgets.current.has(selectedBudget.id)) {
@@ -155,7 +154,6 @@ const Shopping = () => {
         }
       }
 
-      // 2. Lấy Items an toàn
       const itemsRes = await shoppingItemAPI.getItemsByBudget(
         selectedBudget.id,
         page,
@@ -174,7 +172,17 @@ const Shopping = () => {
     }
   }, [page, size, selectedBudget]);
 
-  // --- Effects ---
+  // ── SẮP XẾP LẠI EFFECT VÀ MEMO ────────────────────────────────────────────
+
+  // 1. Lấy tên Budget hiện tại
+  const currentBudgetName = useMemo(() => {
+    if (items && items.length > 0 && items[0].budgetName) {
+      return items[0].budgetName;
+    }
+    return selectedBudget ? selectedBudget.name : null;
+  }, [items, selectedBudget]);
+
+  // 2. Chạy init fetch 1 lần lúc component mount
   useEffect(() => {
     if (!didInitialFetch.current) {
       didInitialFetch.current = true;
@@ -182,24 +190,47 @@ const Shopping = () => {
       fetchOccasions();
       fetchCategories();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 3. Chạy fetchItems mỗi khi chuyển trang hoặc đổi budget
   useEffect(() => {
     fetchItems();
   }, [fetchItems]);
 
-  // --- Handlers ---
-  const handleToggleStatus = async (itemId, isChecked) => {
-    try {
-      const res = await shoppingItemAPI.updateItem(itemId, { isChecked });
-      if (res?.success) {
-        fetchItems();
-        fetchBudgets();
-      }
-    } catch (err) {
-      console.error("Failed to update item status:", err);
-      toast.error("Failed to update status");
-    }
+  // ── HANDLERS ─────────────────────────────────────────────────────────────
+  const handleToggleStatus = (itemId, isChecked) => {
+    const originalItems = [...items];
+
+    scheduleAction({
+      actionKey: `toggle-item-${itemId}`,
+      toastMessage: isChecked
+        ? "Marked as bought – Undo?"
+        : "Marked as pending – Undo?",
+      onOptimistic: () => {
+        setItems((prev) =>
+          prev.map((item) =>
+            item.id === itemId ? { ...item, isChecked } : item,
+          ),
+        );
+      },
+      actionFn: async () => {
+        const res = await shoppingItemAPI.updateItem(itemId, { isChecked });
+        if (res.success) {
+          fetchItems();
+          fetchBudgets();
+        }
+      },
+      onUndo: () => {
+        setItems(originalItems);
+        toast.info("Status change undone.");
+      },
+      onError: (err) => {
+        console.error("Failed to update item status:", err);
+        setItems(originalItems);
+        toast.error("Failed to update status");
+      },
+    });
   };
 
   const openCreateModal = () => {
@@ -251,7 +282,7 @@ const Shopping = () => {
           </button>
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-5 py-2.5 bg-(--btn-primary-bg) text-(--btn-primary-text) rounded-xl text-sm font-bold shadow-(--btn-primary-shadow) hover:opacity-(--btn-primary-hover-opacity) hover:-translate-y-0.5 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#e11d48] text-white rounded-xl text-sm font-bold shadow-lg shadow-rose-100 hover:bg-[#be123c] hover:-translate-y-0.5 transition-all"
           >
             <Plus size={20} className="stroke-3" /> New Item
           </button>
@@ -280,7 +311,7 @@ const Shopping = () => {
                   disabled={budgetsLoading}
                   className="w-full sm:w-auto flex items-center justify-between gap-3 bg-(--color-bg-sidebar) hover:bg-(--color-border-light) px-4 py-2 rounded-xl border border-(--color-border-light) text-sm font-bold text-(--color-text-primary) transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span className="truncate max-w-[150px]">
+                  <span className="truncate max-w-37.5">
                     {selectedBudget?.name ||
                       (budgetsLoading ? "Loading..." : "Select Budget")}
                   </span>

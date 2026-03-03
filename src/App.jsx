@@ -10,13 +10,13 @@ import Shopping from "./pages/Shopping";
 import Calendar from "./pages/Calendar";
 import SignUp from "./pages/auth/SignUp.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
-import LoginForm from "./pages/auth/Login.jsx";
-import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
-import ResetPassword from "./pages/auth/ResetPassword.jsx";
-import ResetPassSuccess from "./pages/auth/ResetPassSuccess.jsx";
+import LoginForm from "./pages/auth/Login";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import ResetPassSuccess from "./pages/auth/ResetPassSuccess";
 import FallingTheme from "./components/FallingTheme.jsx";
-import { useAuth } from "./hooks/useAuth.js";
-import useTheme from "./hooks/useTheme.js";
+import { useAuth } from "./hooks/useAuth";
+import useTheme from "./hooks/useTheme";
 
 function App() {
   const { token } = useAuth();

@@ -11,27 +11,29 @@ import { ShoppingCategoryProvider } from "./contexts/ShoppingCategoryProvider.js
 import { TaskCategoryProvider } from "./contexts/TaskCategoryProvider.jsx";
 import { BudgetProvider } from "./contexts/BudgetProvider.jsx";
 import { OccasionProvider } from "./contexts/OccasionProvider.jsx";
-
+import { DashboardProvider } from "./contexts/DashboardProvider.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <OccasionProvider>
-        <BudgetProvider>
-          <ShoppingCategoryProvider>
-            <ShoppingItemProvider>
-              <TaskCategoryProvider>
-                <TaskProvider>
-                  <ThemeProvider>
-                    <AuthProvider>
-                      <App />
-                    </AuthProvider>
-                  </ThemeProvider>
-                </TaskProvider>
-              </TaskCategoryProvider>
-            </ShoppingItemProvider>
-          </ShoppingCategoryProvider>
-        </BudgetProvider>
-      </OccasionProvider>
+      <DashboardProvider>
+        <OccasionProvider>
+          <BudgetProvider>
+            <ShoppingCategoryProvider>
+              <ShoppingItemProvider>
+                <TaskCategoryProvider>
+                  <TaskProvider>
+                    <ThemeProvider>
+                      <AuthProvider>
+                        <App />
+                      </AuthProvider>
+                    </ThemeProvider>
+                  </TaskProvider>
+                </TaskCategoryProvider>
+              </ShoppingItemProvider>
+            </ShoppingCategoryProvider>
+          </BudgetProvider>
+        </OccasionProvider>
+      </DashboardProvider>
     </BrowserRouter>
   </StrictMode>,
 );
