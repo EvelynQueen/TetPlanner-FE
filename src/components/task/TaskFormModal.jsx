@@ -442,11 +442,12 @@ export function TaskForm({
               className={`${inputCls("category_id")} appearance-none pr-10 cursor-pointer`}
             >
               <option value="">Select category....</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
+              {Array.isArray(categories) &&
+                categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
             </select>
             <ChevronDown
               size={18}
@@ -491,11 +492,12 @@ export function TaskForm({
             className={`${inputCls("occasion_id")} appearance-none pr-10 cursor-pointer`}
           >
             <option value="">Select occasion (optional)...</option>
-            {occasions.map((o) => (
-              <option key={o.id} value={o.id}>
-                {o.name}
-              </option>
-            ))}
+            {Array.isArray(occasions) &&
+              occasions.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.name}
+                </option>
+              ))}
           </select>
           <ChevronDown
             size={18}

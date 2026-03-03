@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useShoppingItem } from "../../hooks/useShoppingItem";
 import { useDeferredAction } from "../../hooks/useDeferredAction.jsx";
-import { categoryAPI } from "../../api/categoryApi";
 import Modal from "../Modal";
+import { shoppingCategoryAPI } from "../../api/shoppingCategoryAPI";
 
 const ShoppingItemModal = ({
   isOpen,
@@ -34,12 +34,12 @@ const ShoppingItemModal = ({
   useEffect(() => {
     const fetchCats = async () => {
       try {
-        const res = await categoryAPI.getCategories();
+        const res = await shoppingCategoryAPI.getShoppingCategories();
         if (res.success) {
           setCategories(res.data);
           // Set default category if creating new
           if (!initialItem && res.data.length > 0) {
-            setFormData(prev => ({ ...prev, categoryId: res.data[0].id }));
+            setFormData((prev) => ({ ...prev, categoryId: res.data[0].id }));
           }
         }
       } catch (err) {
@@ -121,7 +121,9 @@ const ShoppingItemModal = ({
         },
         onError: (err) => {
           onSuccess(); // Re-fetch original data
-          toast.error(err.response?.data?.message || "Update failed. Changes reverted.");
+          toast.error(
+            err.response?.data?.message || "Update failed. Changes reverted.",
+          );
         },
       });
     } else {
@@ -276,7 +278,7 @@ const ShoppingItemModal = ({
           <button
             type="submit"
             disabled={loading}
-            className="flex-[2] py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200 transition-all disabled:opacity-50"
+            className="flex-2 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200 transition-all disabled:opacity-50"
           >
             {loading ? "SAVING..." : isEdit ? "Save Changes" : "Save Item"}
           </button>

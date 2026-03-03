@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { categoryAPI } from "../../api/categoryApi";
 import { Plus, Trash2, Edit2, Check, X } from "lucide-react";
 import Modal from "../Modal";
+import { shoppingCategoryAPI } from "../../api/shoppingCategoryAPI";
 
 const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
   const [categories, setCategories] = useState([]);
@@ -14,9 +14,10 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const res = await categoryAPI.getCategories();
+      const res = await shoppingCategoryAPI.getShoppingCategories();
       if (res.success) setCategories(res.data);
     } catch (err) {
+      console.log(err);
       toast.error("Failed to load categories");
     } finally {
       setLoading(false);
@@ -30,7 +31,9 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
   const handleAdd = async () => {
     if (!newName.trim()) return;
     try {
-      const res = await categoryAPI.createCategory({ name: newName });
+      const res = await shoppingCategoryAPI.createShoppingCategory({
+        name: newName,
+      });
       if (res.success) {
         toast.success("Category added");
         setNewName("");
@@ -38,6 +41,7 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
         onSuccess();
       }
     } catch (err) {
+      console.error(err);
       toast.error("Failed to add category");
     }
   };
@@ -45,7 +49,9 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
   const handleUpdate = async (id) => {
     if (!editName.trim()) return;
     try {
-      const res = await categoryAPI.updateCategory(id, { name: editName });
+      const res = await shoppingCategoryAPI.updateShoppingCategory(id, {
+        name: editName,
+      });
       if (res.success) {
         toast.success("Category updated");
         setEditingId(null);
@@ -53,6 +59,7 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
         onSuccess();
       }
     } catch (err) {
+      console.error(err);
       toast.error("Failed to update category");
     }
   };
@@ -63,13 +70,14 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
     )
       return;
     try {
-      const res = await categoryAPI.deleteCategory(id);
+      const res = await shoppingCategoryAPI.deleteShoppingCategory(id);
       if (res.success) {
         toast.info("Category deleted");
         fetchCategories();
         onSuccess();
       }
     } catch (err) {
+      console.error(err);
       toast.error("Failed to delete category");
     }
   };
@@ -97,7 +105,7 @@ const CategoryModal = ({ isOpen, onClose, onSuccess }) => {
           </button>
         </div>
 
-        <div className="max-h-[300px] overflow-y-auto pr-1">
+        <div className="max-h-75 overflow-y-auto pr-1">
           {loading ? (
             <div className="text-center py-4 text-gray-400">Loading...</div>
           ) : (

@@ -11,12 +11,20 @@ import { AuthContext } from "./AuthContext";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+
   const [token, setToken] = useState(
     () => localStorage.getItem("accessToken") || null,
   );
+
+  // Khởi tạo userName từ localStorage
+  const [userName, setUserName] = useState(
+    () => localStorage.getItem("userName") || null,
+  );
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Đồng bộ token với localStorage
   useEffect(() => {
     if (token && token !== "undefined" && token !== "null") {
       localStorage.setItem("accessToken", token);
@@ -24,6 +32,15 @@ export function AuthProvider({ children }) {
       localStorage.removeItem("accessToken");
     }
   }, [token]);
+
+  // Đồng bộ userName với localStorage
+  useEffect(() => {
+    if (userName && userName !== "undefined" && userName !== "null") {
+      localStorage.setItem("userName", userName);
+    } else {
+      localStorage.removeItem("userName");
+    }
+  }, [userName]);
 
   const clearError = useCallback(() => setError(""), []);
 
@@ -47,8 +64,12 @@ export function AuthProvider({ children }) {
     setError("");
     try {
       const response = await verifyOTP(email, otp);
-      const authToken = response.data?.accessToken || response.accessToken || response.data?.token || response.token;
-      
+      const authToken =
+        response.data?.accessToken ||
+        response.accessToken ||
+        response.data?.token ||
+        response.token;
+
       if (authToken) {
         setToken(authToken);
       }
@@ -81,15 +102,20 @@ export function AuthProvider({ children }) {
     setError("");
     try {
       const response = await loginService({ email, password });
-      
-      // Handle various potential token paths in the response
-      const authToken = response.data?.accessToken || response.accessToken || response.data?.token || response.token;
-      
+
+      // Trích xuất token và name theo cấu trúc API chuẩn
+      const authToken = response.data?.accessToken;
+      const name = response.data?.name || email;
+
       if (response.success && authToken) {
         setToken(authToken);
-        setUser({ email });
+        setUserName(name); // Cập nhật state userName (sẽ trigger useEffect lưu vào localStorage)
+        setUser({ email, name });
       } else if (response.success && !authToken) {
-        console.warn("Login successful but no token found in response:", response);
+        console.warn(
+          "Login successful but no token found in response:",
+          response,
+        );
       }
       return response;
     } catch (err) {
@@ -101,9 +127,14 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = useCallback(() => {
+    // Reset toàn bộ state
     setToken(null);
     setUser(null);
+    setUserName(null);
+
+    // Xóa dữ liệu ở localStorage
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("userName");
     localStorage.removeItem("user");
   }, []);
 
@@ -146,6 +177,7 @@ export function AuthProvider({ children }) {
       value={{
         user,
         token,
+        userName,
         error,
         loading,
         signUp,

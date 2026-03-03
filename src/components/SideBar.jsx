@@ -7,8 +7,10 @@ import { RiWallet3Fill } from "react-icons/ri";
 import { FaCalendarAlt } from "react-icons/fa";
 import ThemeButton from "./ThemeButton";
 import ProfileButton from "./ProfileButton";
+import { useAuth } from "../hooks/useAuth";
 
 const SideBar = () => {
+  const { userName } = useAuth();
   return (
     <div className="w-64 shrink-0 h-full p-4 flex flex-col bg-(--color-bg-sidebar) border-r border-(--color-border-light) caret-transparent">
       {/* Top of sidebar */}
@@ -16,7 +18,11 @@ const SideBar = () => {
         <TetPlanner />
 
         <nav className="flex flex-col gap-2 mt-4">
-          <SideBarButton icon={RiDashboardFill} content="Dashboard" to="/dashboard" />
+          <SideBarButton
+            icon={RiDashboardFill}
+            content="Dashboard"
+            to="/dashboard"
+          />
           <SideBarButton icon={RiTaskFill} content="Task" to="/tasks" />
           <SideBarButton
             icon={RiWallet3Fill}
@@ -33,7 +39,7 @@ const SideBar = () => {
       {/* Bottom of sidebar */}
       <div className="mt-auto">
         <ThemeButton />
-        <ProfileButton name="John Doe" />
+        <ProfileButton name={userName} />
       </div>
     </div>
   );

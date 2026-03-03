@@ -14,8 +14,7 @@ import LoginForm from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import ResetPassSuccess from "./pages/auth/ResetPassSuccess";
-import TaskProvider from "./contexts/TaskProvider";
-import DashboardProvider from "./contexts/DashboardProvider";
+import FallingTheme from "./components/FallingTheme.jsx";
 import { useAuth } from "./hooks/useAuth";
 import useTheme from "./hooks/useTheme";
 
@@ -24,46 +23,46 @@ function App() {
   const { flowerIcon } = useTheme("default");
 
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/reset-success" element={<ResetPassSuccess />} />
-        <Route
-          path="/*"
-          element={
-            <div className="w-full h-screen flex bg-(--color-bg-main)">
-              <SideBar />
-              <TaskProvider>
-                <Routes>
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <DashboardProvider>
-                        <Dashboard />
-                      </DashboardProvider>
-                    }
-                  />
-                  <Route path="/tasks" element={<Tasks />} />
-                  <Route path="/shopping" element={<Shopping />} />
-                  <Route path="/calendar" element={<Calendar />} />
-                </Routes>
-              </TaskProvider>
-            </div>
-          }
-        />
-      </Routes>
+    <div className="w-full relative h-screen flex overflow-hidden bg-(--color-bg-app) text-(--color-text-primary) transition-colors duration-200">
+      {token ? (
+        <>
+          <div className="h-screen shrink-0 z-20">
+            <SideBar />
+          </div>
+
+          <FallingTheme flowerIcon={flowerIcon} />
+
+          <div className="flex-1 h-screen overflow-y-auto relative scroll-smooth">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/tasks" element={<Tasks />} />
+              <Route path="/shopping" element={<Shopping />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </div>
+        </>
+      ) : (
+        <div className="flex-1 h-screen overflow-y-auto">
+          <Routes>
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/reset-success" element={<ResetPassSuccess />} />
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        </div>
+      )}
+
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={2000}
         hideProgressBar={false}
         theme="colored"
       />
-    </>
+    </div>
   );
 }
 

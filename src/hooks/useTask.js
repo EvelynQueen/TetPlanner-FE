@@ -8,9 +8,9 @@ import {
   updateTaskStatus,
   getTaskById,
 } from "../api/taskApi";
-import { getCategories } from "../api/categoryApi";
 import { getOccasions } from "../api/occasion_temp.js";
 import { useDeferredAction } from "./useDeferredAction.jsx";
+import { getTaskCategories } from "../api/taskCategoryAPI";
 
 /**
  * useTask — low-level hook that owns all task state and API calls.
@@ -35,7 +35,7 @@ export const useTask = () => {
       setLoading(true);
       const [tasksData, categoriesData, occasionsData] = await Promise.all([
         getTasks(),
-        getCategories(),
+        getTaskCategories(),
         getOccasions(),
       ]);
       setTasks(tasksData ?? []);

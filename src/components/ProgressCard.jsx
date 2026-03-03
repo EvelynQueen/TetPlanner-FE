@@ -1,22 +1,4 @@
-/**
- * ProgressCard.jsx
- *
- * Reusable card — label, subtitle, percentage, and a progress bar with a
- * running horse icon (🐎) that tracks progress%, plus a finish flag (🏁).
- *
- * Props:
- *   title       {string}  — e.g. "Tasks Done"
- *   subtitle    {string}  — e.g. "12 of 16 completed"
- *   percent     {number}  — 0–100
- *   color       {string}  — fill color for bar + percentage text
- *   trackColor  {string}  — background color for bar track
- */
 
-/**
- * Clamp horse position so the icon never overflows either edge of the bar.
- * Icon is ~20px wide on a container that is typically 500–900px wide,
- * so a 2 % / 97 % guard is sufficient.
- */
 function clampPos(pct) {
   return Math.min(Math.max(pct, 2), 97);
 }

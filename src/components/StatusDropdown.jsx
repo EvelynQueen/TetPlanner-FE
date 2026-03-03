@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Check } from "lucide-react";
 
 // ─── Style Maps ────────────────────────────────────────────────────────────────
