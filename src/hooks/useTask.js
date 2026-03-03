@@ -9,7 +9,7 @@ import {
   getTaskById,
 } from "../api/taskApi";
 import { getCategories } from "../api/categoryApi";
-import { getOccasions } from "../api/occasionApi";
+import { getOccasions } from "../api/occasion_temp";
 
 /**
  * useTask — low-level hook that owns all task state and API calls.
@@ -46,7 +46,7 @@ export const useTask = () => {
       const data = await getTasks();
       setTasks(data ?? []);
     } catch (error) {
-       toast.error(error.response?.data?.message || "Fetch tasks failed");
+      toast.error(error.response?.data?.message || "Fetch tasks failed");
     } finally {
       setLoading(false);
     }
@@ -65,24 +65,17 @@ export const useTask = () => {
       dueDate: payload.due_date || null,
       dueTime: payload.due_time ? payload.due_time + ":00" : null,
       categoryIdProvided: payload.category_id !== undefined,
-      occasionIdProvided: payload.occasion_id !== undefined
+      occasionIdProvided: payload.occasion_id !== undefined,
     };
   };
-
-  const mapTaskFromBackendItem = (item) => {
-    // Map backend item to frontend states correctly (if required), but typically
-    // we can return it raw as long as table column accesses are correct.
-    return {
-      ...item,
-      // The frontend uses categoryName / timelineLabel
-    }
-  }
 
   const fetchTaskById = async (id) => {
     try {
       return await getTaskById(id);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to load task details");
+      toast.error(
+        error.response?.data?.message || "Failed to load task details",
+      );
       throw error;
     }
   };

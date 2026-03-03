@@ -16,7 +16,7 @@ import BudgetAlertModal from "../components/shopping/BudgetAlertModal";
 // APIs
 import { budgetAPI } from "../api/budgetAPI";
 import { shoppingItemAPI } from "../api/shoppingItemAPI";
-import { occasionAPI } from "../api/occasionApi";
+import { occasionAPI } from "../api/occasion_temp";
 import { categoryAPI } from "../api/categoryApi";
 
 const Shopping = () => {
